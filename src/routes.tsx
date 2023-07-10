@@ -21,6 +21,7 @@ import {
 } from "./ui/Layout/FormFillingLayout";
 import { EventDetailPage } from "./modules/event/pages/eventDetailPage";
 import { MyEventListPage } from "./modules/event/pages/myEventListPage";
+import { EventManagementList } from "./modules/eventManagement/pages/eventList";
 
 const Redirector = ({ path }: { path: string }) => {
   const navigate = useNavigate();
@@ -112,6 +113,19 @@ const ROUTES = {
       {
         path: "admin/*",
         children: [
+          {
+            path: "events",
+            children: [
+              {
+                index: true,
+                element: <EventManagementList />,
+              },
+              {
+                path: ":id",
+                element: <EventDetailPage />,
+              },
+            ],
+          },
           {
             path: "trainings",
             children: [
