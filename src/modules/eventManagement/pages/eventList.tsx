@@ -22,7 +22,13 @@ export const EventManagementList = () => {
   const smallerThanSM = useMediaQuery(`(max-width: ${t.breakpoints.sm}`);
   const [createEvent, setCreateEvent] = useState<boolean>(false);
   const [search, setSearch] = useState<string>();
-  const { events, getEvents, sortEvents, loading } = useEventsList();
+  const {
+    events,
+    getEvents,
+    sortEvents,
+    createEvent: createEventFn,
+    loading,
+  } = useEventsList();
   const [dateFilter, setDateFilter] = useState<Date>();
   useEffect(() => {
     getEvents();
@@ -112,8 +118,10 @@ export const EventManagementList = () => {
         <CreateNewEventDialog
           isOpen={createEvent}
           onClose={() => setCreateEvent(false)}
-          onDone={(event) => {
+          onDone={async (event) => {
             console.log(1349, event);
+            await createEventFn(event);
+            await getEvents();
           }}
         />
       </Stack>

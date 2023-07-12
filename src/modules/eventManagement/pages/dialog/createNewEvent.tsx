@@ -1,4 +1,3 @@
-import { useEventsList } from "@/modules/event/store/useEventList";
 import { ScheduledEventModel } from "@/types/models/scheduledEvent";
 import { Typography } from "@/ui/Typography";
 import {
@@ -11,6 +10,7 @@ import {
 } from "@mantine/core";
 import { DateTimePicker } from "@mantine/dates";
 import { useForm } from "@mantine/form";
+import { useMediaQuery } from "@mantine/hooks";
 import { Timestamp } from "firebase/firestore";
 
 interface NewEventDialogProps {
@@ -28,7 +28,7 @@ export const CreateNewEventDialog: React.FC<NewEventDialogProps> = ({
     borderBottom: "1px solid",
     borderColor: t.fn.rgba(t.colors.night[5], 0.12),
   };
-  const { createEvent, getEvents } = useEventsList();
+  const isMobile = useMediaQuery(t.fn.smallerThan("sm").replace("@media ", ""));
   const form = useForm({
     initialValues: {
       title: "",
@@ -51,19 +51,31 @@ export const CreateNewEventDialog: React.FC<NewEventDialogProps> = ({
   });
 
   return (
-    <Modal.Root opened={isOpen} onClose={onClose}>
+    <Modal.Root
+      opened={isOpen}
+      onClose={onClose}
+      sx={{
+        "& .mantine-Modal-inner": {
+          padding: 0,
+        },
+      }}
+    >
       <Modal.Overlay
         sx={{ backgroundColor: t.fn.rgba(t.colors.night[5], 0.25) }}
       />
-      <Modal.Content radius={16} sx={{ overflowY: "visible" }}>
+      <Modal.Content
+        radius={16}
+        maw={isMobile ? "90%" : undefined}
+        m={"auto"}
+        sx={{ overflowY: "visible" }}
+      >
         <Modal.Header sx={{ ...borderStyle, borderRadius: "16px 16px 0 0" }}>
           <Typography textVariant="title-lg">Create a New Event</Typography>
         </Modal.Header>
         <Modal.Body p={0}>
           <form
             onSubmit={form.onSubmit(async (values) => {
-              await createEvent(values);
-              await getEvents();
+              onDone({ ...values });
               form.reset();
               onClose();
             })}
