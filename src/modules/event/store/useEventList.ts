@@ -1,13 +1,21 @@
-import { ScheduledEvent } from "@/types/models/scheduledEvent";
+import {
+  ScheduledEvent,
+  ScheduledEventModel,
+} from "@/types/models/scheduledEvent";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-import { getAllScheduledEvents } from "../services/eventService";
+import {
+  createEventMaster,
+  getAllScheduledEvents,
+} from "../services/eventService";
+import { kDefaultThumbnailFilename } from "@/lib/constants";
 
 interface EventListStore {
   events?: ScheduledEvent[];
   getEvents: () => Promise<ScheduledEvent[]>;
 
   sortEvents: (orderBy: keyof ScheduledEvent, sortBy: "asc" | "desc") => void;
+  createEvent: (event: Partial<ScheduledEventModel>) => Promise<void>;
   isValid: boolean;
   loading: boolean;
 }
@@ -35,6 +43,25 @@ export const useEventsList = create(
       }
 
       return set({ events: sortData(eventsList, orderBy, sortBy) });
+    },
+    async createEvent(event) {
+      const newEvent = await createEventMaster({
+        title: event.title!,
+        organizer: event.organizer!,
+        venue: event.venue!,
+        scheduleDateTime: event.scheduleDateTime!,
+        description: "",
+        thumbnailFileName: kDefaultThumbnailFilename,
+      });
+      set((s) => {
+        if (s.events)
+          return {
+            events: [...s.events, newEvent],
+            isValid: false,
+            loading: false,
+          };
+        else return s;
+      });
     },
   }))
 );

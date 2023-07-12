@@ -15,20 +15,31 @@ import {
 import { DatePickerInput } from "@mantine/dates";
 import { useMediaQuery } from "@mantine/hooks";
 import { useEffect, useState } from "react";
+import { CreateNewEventDialog } from "./dialog/createNewEvent";
 
 export const EventManagementList = () => {
   const t = useMantineTheme();
   const smallerThanSM = useMediaQuery(`(max-width: ${t.breakpoints.sm}`);
+  const [createEvent, setCreateEvent] = useState<boolean>(false);
   const [search, setSearch] = useState<string>();
   const { events, getEvents, sortEvents, loading } = useEventsList();
-
+  const [dateFilter, setDateFilter] = useState<Date>();
   useEffect(() => {
     getEvents();
   }, [getEvents]);
 
-  const filteredEvents = events?.filter((event) =>
+  var filteredEvents = events?.filter((event) =>
     search ? event.title.toLowerCase() === search.toLowerCase() : true
   );
+  if (dateFilter && filteredEvents) {
+    const startDate = new Date(dateFilter.toISOString());
+    const endDate = new Date(dateFilter.toISOString());
+    endDate.setHours(23, 59, 59);
+    filteredEvents = filteredEvents.filter((ev) => {
+      const dtMs = ev.scheduleDateTime.toDate();
+      return dtMs > startDate && dtMs < endDate;
+    });
+  }
   const isEmpty = filteredEvents?.length === 0;
 
   return (
@@ -36,7 +47,11 @@ export const EventManagementList = () => {
       <Stack spacing={24}>
         <Flex justify="space-between">
           <Typography textVariant="headline-lg">All Events</Typography>
-          <Button radius={8} leftIcon={<IconPlus />}>
+          <Button
+            radius={8}
+            leftIcon={<IconPlus />}
+            onClick={() => setCreateEvent(true)}
+          >
             Create a new event
           </Button>
         </Flex>
@@ -68,6 +83,10 @@ export const EventManagementList = () => {
                 }
               },
             }}
+            allowDeselect
+            onChange={(date) => {
+              setDateFilter(date ? (date as Date) : undefined);
+            }}
           />
           <SortMenu
             onSortChanged={(val) => {
@@ -90,6 +109,13 @@ export const EventManagementList = () => {
             </Button>
           </EmptyData> */}
         </SimpleGrid>
+        <CreateNewEventDialog
+          isOpen={createEvent}
+          onClose={() => setCreateEvent(false)}
+          onDone={(event) => {
+            console.log(1349, event);
+          }}
+        />
       </Stack>
     </ProtectedPage>
   );
