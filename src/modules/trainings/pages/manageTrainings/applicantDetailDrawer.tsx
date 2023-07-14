@@ -121,8 +121,8 @@ export const ApplicantDetails = () => {
         </Drawer.Title>
         <Drawer.CloseButton />
       </Drawer.Header>
-      <Drawer.Body mih={"95vh"} sx={{ gap: 0 }}>
-        <Stack pb={80} pt={16}>
+      <Drawer.Body mih={"95vh"} pb={0} px={0} sx={{ gap: 0 }}>
+        <Stack pb={80} pt={16} px={16}>
           <Typography textVariant="title-md">Applicant Information</Typography>
           <Flex gap={16} align={"center"}>
             <Avatar size={64} radius={64} color="cyan">
@@ -292,7 +292,7 @@ const DrawerFooter = () => {
     <Flex
       px="1rem"
       sx={(t) => ({
-        position: "absolute",
+        position: "sticky",
         bottom: 0,
         right: 0,
         borderTop: "1px solid",
