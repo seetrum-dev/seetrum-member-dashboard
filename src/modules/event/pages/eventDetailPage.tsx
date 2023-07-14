@@ -220,11 +220,9 @@ const AddToCalendar: React.FC<{ isRegistered?: boolean }> = ({
       }
   };
   return (
-    <Flex
-      justify="space-between"
-      align="center"
+    <Stack
       maw={621}
-      gap={16}
+      spacing={16}
       sx={(t) => ({
         border: isRegistered ? "none" : "1px solid",
         borderColor: t.fn.rgba(t.colors.night[5], 0.12),
@@ -239,13 +237,24 @@ const AddToCalendar: React.FC<{ isRegistered?: boolean }> = ({
           ? "You have already registered for this event."
           : "Interested in joining this event?"}
       </Typography>
-      <Button
-        sx={{ borderRadius: 8 }}
-        onClick={isRegistered ? handleAddToCalendar : handleRegister}
-      >
-        {isRegistered ? "Add event to Google Calendar" : "Join now for free"}
-      </Button>
-    </Flex>
+      <Flex gap={16}>
+        {event?.whatsappLink && (
+          <Button
+            radius={8}
+            onClick={(e) => window.open(event.whatsappLink, "_blank")}
+          >
+            Join event Whatsapp group
+          </Button>
+        )}
+        <Button
+          sx={{ borderRadius: 8 }}
+          onClick={isRegistered ? handleAddToCalendar : handleRegister}
+          variant={event?.whatsappLink ? "outline" : "filled"}
+        >
+          {isRegistered ? "Add event to Google Calendar" : "Join now for free"}
+        </Button>
+      </Flex>
+    </Stack>
   );
 };
 
