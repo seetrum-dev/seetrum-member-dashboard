@@ -295,7 +295,9 @@ export const ManageTrainingApplicants = () => {
         mantineTopToolbarProps={{ display: "none" }}
         renderTopToolbarCustomActions={({ table }) => {
           const fileUrlParser = (filename: string) =>
-            `https://firebasestorage.googleapis.com/v0/b/${firestorageBucket}/o/temp%2F${filename}?alt=media`;
+            new URL(
+              `https://firebasestorage.googleapis.com/v0/b/${firestorageBucket}/o/temp%2F${filename}?alt=media`
+            ).toString();
 
           const dataFlatter = (rows: TrainingMember[]) =>
             rows.map((row, i) => {
