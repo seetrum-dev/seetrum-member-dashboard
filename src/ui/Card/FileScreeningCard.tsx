@@ -57,7 +57,7 @@ export const FileScreeningCard = (
         multiline
         sx={{ overflowWrap: "anywhere" }}
         maw={300}
-        position="left"
+        position="top-start"
         openDelay={250}
         transitionProps={{ transition: "pop", duration: 300 }}
       >
