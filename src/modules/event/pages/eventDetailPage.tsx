@@ -237,7 +237,7 @@ const AddToCalendar: React.FC<{ isRegistered?: boolean }> = ({
           ? "You have already registered for this event."
           : "Interested in joining this event?"}
       </Typography>
-      <Flex gap={16}>
+      <Flex gap={16} wrap={"wrap"}>
         {event?.whatsappLink && (
           <Button
             radius={8}
