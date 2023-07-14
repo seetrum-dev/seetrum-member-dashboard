@@ -11,6 +11,7 @@ export type ScheduledEventModel = {
   organizer: string;
   description: string;
   thumbnailFileName: string;
+  whatsappLink?: string;
 };
 
 export const getDummyEvent = () => {
