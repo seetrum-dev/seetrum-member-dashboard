@@ -1,7 +1,8 @@
 import { kRowsPerPageOptions } from "@/lib/constants";
-import { toTitleCase } from "@/lib/utils";
+import { mergeObjects, pretyDateTime, toTitleCase } from "@/lib/utils";
 import { useApplicantStore } from "@/modules/trainings/store/useApplicantsStore";
 import { TrainingMember } from "@/types/models/trainingMember";
+import { ExportMenu, TablePseudoExportButton } from "@/ui/Button/ExportMenu";
 import { IconChevronRight, IconPDF, IconSearch } from "@/ui/Icons";
 import { Typography } from "@/ui/Typography";
 import {
@@ -16,12 +17,16 @@ import {
   Stack,
   useMantineTheme,
 } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import { MRT_ColumnDef, MantineReactTable } from "mantine-react-table";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Outlet, useNavigate, useParams } from "react-router-dom";
 
 export const ManageTrainingApplicants = () => {
   const theme = useMantineTheme();
+  const isMobile = useMediaQuery(
+    theme.fn.smallerThan("sm").replace("@media ", "")
+  );
   const navigate = useNavigate();
   const { applicants, getApplicants } = useApplicantStore();
   const [activeIndex, setActiveIndex] = useState<number>();
@@ -35,6 +40,9 @@ export const ManageTrainingApplicants = () => {
     pageIndex: 0,
     pageSize: parseInt(kRowsPerPageOptions[0]),
   });
+
+  const expAllBtn = useRef<HTMLButtonElement>(null);
+  const expRowsBtn = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (trainingId) getApplicants(trainingId);
@@ -234,15 +242,21 @@ export const ManageTrainingApplicants = () => {
       : lastItem;
 
   return (
-    <Stack spacing={24}>
-      <Input
-        placeholder="Search applicants"
-        value={globalFilter}
-        onChange={(e) => setGlobalFilter(e.target.value)}
-        radius={100}
-        rightSection={<IconSearch color={theme.colors.night[5]} />}
-        sx={(t) => ({ maxWidth: t.fn.largerThan("sm") ? "50%" : "100%" })}
-      />
+    <Stack spacing={isMobile ? 16 : 24}>
+      <Flex justify="space-between" gap={16} align="center">
+        <Input
+          placeholder="Search applicants"
+          value={globalFilter}
+          onChange={(e) => setGlobalFilter(e.target.value)}
+          radius={100}
+          rightSection={<IconSearch color={theme.colors.night[5]} />}
+          sx={(t) => ({
+            maxWidth: !isMobile ? "50%" : "100%",
+            flexGrow: 1,
+          })}
+        />
+        <ExportMenu exportAllRef={expAllBtn} exportRowsRef={expRowsBtn} />
+      </Flex>
       <Typography textVariant="body-md">
         Showing {fisrtItemNumber} - {lastItemNumber} applicants of total{" "}
         {applicants[trainingId].length} training applicants.
@@ -276,7 +290,54 @@ export const ManageTrainingApplicants = () => {
           density: "xs",
           columnVisibility: { id: false },
         }}
-        enableTopToolbar={false}
+        enableTopToolbar={true}
+        mantineTopToolbarProps={{ display: "none" }}
+        renderTopToolbarCustomActions={({ table }) => {
+          const dataFlatter = (rows: TrainingMember[]) =>
+            rows.map((row, i) => {
+              const dt = {
+                ...row,
+                createdAt: pretyDateTime(row.createdAt.toDate()),
+                updatedAt: pretyDateTime(row.updatedAt.toDate()),
+                ...mergeObjects(
+                  row.additionalData?.map((data) => ({
+                    [data.label]: data.value,
+                  })) || []
+                ),
+                additionalData: undefined,
+                requiredFiles: row.requiredFiles.length,
+                ...mergeObjects(
+                  row.requiredFiles.map((data) => ({
+                    [data.tag]: data.filename,
+                  }))
+                ),
+                issuedCertificate: row.issuedCertificate.length,
+                ...mergeObjects(
+                  row.issuedCertificate.map((data) => ({
+                    [data.tag]: data.filename,
+                  }))
+                ),
+              } as Record<keyof TrainingMember, any>;
+              delete dt.additionalData;
+              delete dt.id;
+              return dt;
+            });
+          return (
+            <TablePseudoExportButton
+              exportAllRef={expAllBtn}
+              exportRowsRef={expRowsBtn}
+              onExportAll={(exporter) => {
+                const exportedData = dataFlatter(applicants[trainingId]);
+                exporter(exportedData);
+              }}
+              onExportRows={(exporter) => {
+                const rows = table.getPrePaginationRowModel().rows;
+                const exportedData = rows.map((row) => row.original);
+                exporter(dataFlatter(exportedData));
+              }}
+            />
+          );
+        }}
       />
       <Drawer.Root
         opened={Boolean(applicantId)}
