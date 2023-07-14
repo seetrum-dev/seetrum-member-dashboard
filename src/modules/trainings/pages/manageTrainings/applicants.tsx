@@ -22,6 +22,7 @@ import { MRT_ColumnDef, MantineReactTable } from "mantine-react-table";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Outlet, useNavigate, useParams } from "react-router-dom";
 
+const firestorageBucket = import.meta.env.VITE_FIREBASE_STORAGE_BUCKET;
 export const ManageTrainingApplicants = () => {
   const theme = useMantineTheme();
   const isMobile = useMediaQuery(
@@ -293,6 +294,9 @@ export const ManageTrainingApplicants = () => {
         enableTopToolbar={true}
         mantineTopToolbarProps={{ display: "none" }}
         renderTopToolbarCustomActions={({ table }) => {
+          const fileUrlParser = (filename: string) =>
+            `https://firebasestorage.googleapis.com/v0/b/${firestorageBucket}/o/temp%2F${filename}?alt=media`;
+
           const dataFlatter = (rows: TrainingMember[]) =>
             rows.map((row, i) => {
               const dt = {
@@ -308,13 +312,13 @@ export const ManageTrainingApplicants = () => {
                 requiredFiles: row.requiredFiles.length,
                 ...mergeObjects(
                   row.requiredFiles.map((data) => ({
-                    [data.tag]: data.filename,
+                    [data.tag]: fileUrlParser(data.filename),
                   }))
                 ),
                 issuedCertificate: row.issuedCertificate.length,
                 ...mergeObjects(
                   row.issuedCertificate.map((data) => ({
-                    [data.tag]: data.filename,
+                    [data.tag]: fileUrlParser(data.filename),
                   }))
                 ),
               } as Record<keyof TrainingMember, any>;
