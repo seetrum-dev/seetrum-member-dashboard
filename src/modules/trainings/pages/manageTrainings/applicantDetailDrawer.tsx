@@ -150,6 +150,22 @@ export const ApplicantDetails = () => {
               value={toTitleCase(activeApplicant?.institutionName || "")}
             />
           </SimpleGrid>
+          {activeApplicant?.additionalData && (
+            <>
+              <Divider />
+              <Typography textVariant="title-md">
+                Additional Information
+              </Typography>
+              {activeApplicant.additionalData.map((data) => {
+                return (
+                  <FieldView
+                    label={data.label}
+                    value={toTitleCase(data.value || "")}
+                  />
+                );
+              })}
+            </>
+          )}
           <Divider />
           <Typography textVariant="title-md">Uploaded Files</Typography>
           <Stack spacing={16}>
