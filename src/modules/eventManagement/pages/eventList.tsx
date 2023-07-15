@@ -15,7 +15,8 @@ import {
 import { DatePickerInput } from "@mantine/dates";
 import { useMediaQuery } from "@mantine/hooks";
 import { useEffect, useState } from "react";
-import { CreateNewEventDialog } from "./dialog/createNewEvent";
+import { CreateNewEventDialog } from "../dialog/createNewEvent";
+import { EmptyData } from "@/modules/event/components/emptyData";
 
 export const EventManagementList = () => {
   const t = useMantineTheme();
@@ -55,7 +56,7 @@ export const EventManagementList = () => {
           <Typography textVariant="headline-lg">All Events</Typography>
           <Button
             radius={8}
-            leftIcon={<IconPlus />}
+            leftIcon={<IconPlus size={20} />}
             onClick={() => setCreateEvent(true)}
           >
             Create a new event
@@ -108,12 +109,16 @@ export const EventManagementList = () => {
             : filteredEvents.map((ev) => (
                 <EventCard eventData={ev} key={ev.id} />
               ))}
-          {/* TODO: Add empty state */}
-          {/* isEmpty && <EmptyData desc={""}>
-            <Button onClick={() => {}} leftIcon={<IconPlus />}>
-              Add event
-            </Button>
-          </EmptyData> */}
+          {isEmpty && (
+            <EmptyData desc={""}>
+              <Button
+                onClick={() => setCreateEvent(true)}
+                leftIcon={<IconPlus size={20} />}
+              >
+                Add event
+              </Button>
+            </EmptyData>
+          )}
         </SimpleGrid>
         <CreateNewEventDialog
           isOpen={createEvent}
