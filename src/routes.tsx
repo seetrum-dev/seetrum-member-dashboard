@@ -22,6 +22,8 @@ import {
 import { EventDetailPage } from "./modules/event/pages/eventDetailPage";
 import { MyEventListPage } from "./modules/event/pages/myEventListPage";
 import { EventManagementList } from "./modules/eventManagement/pages/eventList";
+import { ManageEventDetailsLayout } from "./modules/eventManagement/layout/ManageEventDetailsLayout";
+import { ManageEventDetail } from "./modules/eventManagement/pages/EventDetails";
 
 const Redirector = ({ path }: { path: string }) => {
   const navigate = useNavigate();
@@ -122,7 +124,19 @@ const ROUTES = {
               },
               {
                 path: ":id",
-                element: <EventDetailPage />,
+                element: <ManageEventDetailsLayout />,
+                children: [
+                  {
+                    path: ":tabId?",
+                    element: <ManageEventDetail />,
+                    children: [
+                      // {
+                      //   path: ":memberId",
+                      //   element: <EventParticipantsDetails />,
+                      // },
+                    ],
+                  },
+                ],
               },
             ],
           },
