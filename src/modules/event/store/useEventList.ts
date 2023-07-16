@@ -18,6 +18,7 @@ interface EventListStore {
   createEvent: (event: Partial<ScheduledEventModel>) => Promise<void>;
   isValid: boolean;
   loading: boolean;
+  setValidStatus: (val: boolean) => void;
 }
 
 export const useEventsList = create(
@@ -62,6 +63,9 @@ export const useEventsList = create(
           };
         else return s;
       });
+    },
+    setValidStatus(val) {
+      set({ isValid: val });
     },
   }))
 );

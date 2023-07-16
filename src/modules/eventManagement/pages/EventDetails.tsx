@@ -1,5 +1,6 @@
 import { useParams } from "react-router-dom";
 import { ManageEventParticipants } from "./EventParticipants";
+import { ManageEventInfo } from "./EventInfo";
 
 type manageEventTabId = "info" | "participants";
 export const ManageEventDetail = () => {
@@ -11,6 +12,6 @@ export const ManageEventDetail = () => {
       return <ManageEventParticipants />;
 
     default:
-      return <h1>Event Details/Info</h1>;
+      return <ManageEventInfo />;
   }
 };
