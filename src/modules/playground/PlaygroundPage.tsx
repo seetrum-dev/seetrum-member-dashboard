@@ -27,6 +27,7 @@ import {
   TrainingMemberPlayground,
   TrainingPlayground,
 } from "./TrainingPlayground";
+import { UserPlayground } from "./UserPlayground";
 
 export const PlaygroundPage: React.FC = () => {
   const user = useAuthStore((state) => state.user);
@@ -62,9 +63,10 @@ export const PlaygroundPage: React.FC = () => {
           <Divider />
           <TrainingPlayground />
           <Divider />
+          <UserPlayground />
           <TrainingMemberPlayground />
-          {/* <EventPlayground /> */}
-          {/* <EventMemberPlayground /> */}
+          <EventPlayground />
+          <EventMemberPlayground />
           <FormPlayground />
           <Box>
             <pre>{JSON.stringify(fileInfo, null, 2)}</pre>
