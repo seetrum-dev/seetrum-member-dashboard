@@ -38,6 +38,11 @@ export const pretyDateTime = (date: Date) => {
   });
 };
 
+export const yyyymmddDateFormater = (date: Date) => {
+  const dt = new Date(date);
+  return dt.toISOString().slice(0, 10).replace(/-/g, "");
+};
+
 export const formatSize = (bytes: number) => {
   if (bytes < 1024) {
     return bytes + " B";
@@ -93,4 +98,15 @@ export const isMeetingLink = (string?: string): boolean => {
     string.includes(service)
   );
   return isMeetingService && !isMapsService;
+};
+
+export const mergeObjects = <T extends object>(
+  arr: T[]
+): Record<keyof T, any> => {
+  return arr.reduce((result, obj) => {
+    Object.keys(obj).forEach((key) => {
+      result[key as keyof T] = obj[key as keyof T];
+    });
+    return result;
+  }, {} as Record<keyof T, any>);
 };
