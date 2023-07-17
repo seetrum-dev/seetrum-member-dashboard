@@ -196,7 +196,7 @@ const AddToCalendar: React.FC<{ isRegistered?: boolean }> = ({
         .replace(/\.\d{3}/g, "");
 
     const endTime = event.scheduleDateTime.toDate();
-    endTime.setSeconds(3600);
+    endTime.setSeconds(3600 * 3);
 
     const uri = new URL(
       `https://calendar.google.com/calendar/r/eventedit?&text=${
