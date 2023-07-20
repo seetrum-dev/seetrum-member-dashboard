@@ -3,9 +3,11 @@ import { pretyDateTime } from "@/lib/utils";
 import { ProtectedPage } from "@/modules/auth/components/ProtectedPage";
 import { useEventParticipantsStore } from "@/modules/event/store/useEventParticipants";
 import { EventMember } from "@/types/models/eventMember";
+import { ExportMenu, TablePseudoExportButton } from "@/ui/Button/ExportMenu";
 import { IconSearch } from "@/ui/Icons";
 import { Typography } from "@/ui/Typography";
 import {
+  Flex,
   Input,
   Loader,
   SelectItem,
@@ -13,7 +15,7 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { MRT_ColumnDef, MantineReactTable } from "mantine-react-table";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 
 export const ManageEventParticipants = () => {
@@ -34,6 +36,9 @@ export const ManageEventParticipants = () => {
     eventId && getParticipants(eventId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [eventId]);
+
+  const expAllBtn = useRef<HTMLButtonElement>(null);
+  const expRowsBtn = useRef<HTMLButtonElement>(null);
 
   const columns = useMemo<MRT_ColumnDef<EventMember>[]>(
     () => [
@@ -109,17 +114,20 @@ export const ManageEventParticipants = () => {
     <ProtectedPage>
       <Stack>
         {/* Toolbar: Search bar */}
-        <Input
-          placeholder="Search participants"
-          value={globalFilter}
-          onChange={(e) => setGlobalFilter(e.target.value)}
-          radius={100}
-          rightSection={<IconSearch color={theme.colors.night[5]} />}
-          sx={(t) => ({
-            maxWidth: "100%",
-            [t.fn.largerThan("sm")]: { maxWidth: "35%" },
-          })}
-        />
+        <Flex justify={"space-between"}>
+          <Input
+            placeholder="Search participants"
+            value={globalFilter}
+            onChange={(e) => setGlobalFilter(e.target.value)}
+            radius={100}
+            rightSection={<IconSearch color={theme.colors.night[5]} />}
+            sx={(t) => ({
+              maxWidth: "100%",
+              [t.fn.largerThan("sm")]: { maxWidth: "35%" },
+            })}
+          />
+          <ExportMenu exportAllRef={expAllBtn} exportRowsRef={expRowsBtn} />
+        </Flex>
 
         {/* Pagination info */}
         <Typography textVariant="body-md">
@@ -157,7 +165,38 @@ export const ManageEventParticipants = () => {
             density: "xs",
             columnVisibility: { id: false },
           }}
-          enableTopToolbar={false}
+          enableTopToolbar={true}
+          mantineTopToolbarProps={{ display: "none" }}
+          renderTopToolbarCustomActions={({ table }) => {
+            const dataFlatter = (rows: EventMember[]) =>
+              rows.map((row, i) => {
+                const dt = {
+                  joinedEventAt: pretyDateTime(row.createdAt.toDate()),
+                  ...row.member,
+                  ...row,
+                } as Partial<EventMember>;
+                delete dt.createdAt;
+                delete dt.updatedAt;
+                delete dt.member;
+                delete dt.id;
+                return dt;
+              });
+            return (
+              <TablePseudoExportButton
+                exportAllRef={expAllBtn}
+                exportRowsRef={expRowsBtn}
+                onExportAll={(exporter) => {
+                  const exportedData = dataFlatter(participants[eventId]);
+                  exporter(exportedData);
+                }}
+                onExportRows={(exporter) => {
+                  const rows = table.getPrePaginationRowModel().rows;
+                  const exportedData = rows.map((row) => row.original);
+                  exporter(dataFlatter(exportedData));
+                }}
+              />
+            );
+          }}
         />
       </Stack>
     </ProtectedPage>
