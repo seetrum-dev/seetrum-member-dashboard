@@ -1,5 +1,8 @@
 import { pretyDateTime } from "@/lib/utils";
 import { useEventDetail } from "@/modules/event/store/useEventDetail";
+import { useEventsList } from "@/modules/event/store/useEventList";
+import { ScheduledEvent } from "@/types/models/scheduledEvent";
+import { IconCalendar } from "@/ui/Icons";
 import { Typography } from "@/ui/Typography";
 import {
   Box,
@@ -9,15 +12,52 @@ import {
   Loader,
   Skeleton,
   Stack,
+  TextInput,
   TypographyStylesProvider,
+  useMantineTheme,
 } from "@mantine/core";
+import { DateTimePicker } from "@mantine/dates";
+import { UseFormReturnType, isNotEmpty, useForm } from "@mantine/form";
+import { Link, RichTextEditor } from "@mantine/tiptap";
+import { useEditor } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import { Timestamp } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 export const ManageEventGeneralInfo = () => {
   const [editState, setMode] = useState<"edit" | "view">("view");
 
-  const toggleState = () => setMode(editState === "edit" ? "view" : "edit");
+  const { id } = useParams();
+  const { event, getEvent, eventId } = useEventDetail();
+  const { setValidStatus } = useEventsList();
+  useEffect(() => {
+    if (id === eventId) return;
+    id && getEvent(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
+
+  const form = useForm({
+    initialValues: event,
+    validate: {
+      title: isNotEmpty("Title can not be empty"),
+      organizer: isNotEmpty("Trainer name can not be empty"),
+      venue: isNotEmpty("Due date can not be empty"),
+    },
+  });
+
+  const handleSavingEvent = async () => {
+    // update event through API calls
+    console.log(1349, form.values, form.isDirty());
+    setValidStatus(false);
+  };
+
+  const toggleState = () => {
+    if (editState === "edit") {
+      handleSavingEvent();
+    }
+    setMode(editState === "edit" ? "view" : "edit");
+  };
 
   return (
     <Stack
@@ -33,26 +73,23 @@ export const ManageEventGeneralInfo = () => {
       <Flex justify="space-between" gap={16}>
         <Typography textVariant="title-lg">General Information</Typography>
         <Button
-          onClick={() => {} /* toggleState */}
+          onClick={toggleState}
           radius={8}
           variant={editState === "view" ? "subtle" : "filled"}
         >
           {editState === "edit" ? "Save changes" : "Edit"}
         </Button>
       </Flex>
-      {editState === "edit" ? <GeneralInfoEditor /> : <GeneralInfoViewer />}
+      {editState === "edit" ? (
+        <GeneralInfoEditor form={form} />
+      ) : (
+        <GeneralInfoViewer event={event} />
+      )}
     </Stack>
   );
 };
 
-const GeneralInfoViewer = () => {
-  const { id: eventId } = useParams();
-  const { event, getEvent } = useEventDetail();
-  useEffect(() => {
-    if (event?.id === eventId) return;
-    eventId && getEvent(eventId);
-  }, [eventId]);
-
+const GeneralInfoViewer = ({ event }: { event?: ScheduledEvent }) => {
   return (
     <Stack>
       <Stack spacing={8}>
@@ -104,6 +141,114 @@ const GeneralInfoViewer = () => {
   );
 };
 
-const GeneralInfoEditor = () => {
-  return <Stack></Stack>;
+const GeneralInfoEditor = ({
+  form,
+}: {
+  form: UseFormReturnType<
+    ScheduledEvent,
+    (values: ScheduledEvent) => ScheduledEvent
+  >;
+}) => {
+  console.log(1349, form);
+  const t = useMantineTheme();
+  const editor = useEditor(
+    {
+      extensions: [StarterKit, Link],
+      content: form.values.description,
+    },
+    [form.values.description]
+  );
+
+  const handleDueDateChange = (value: Date) => {
+    value.setSeconds(0);
+    const timestamp = Timestamp.fromDate(value);
+    form.setFieldValue("scheduleDateTime", timestamp);
+  };
+
+  return (
+    <Stack>
+      <TextInput
+        label={<Typography textVariant="title-md">Event title</Typography>}
+        placeholder="Enter the event title here"
+        {...form.getInputProps("title")}
+      />
+      <Stack spacing={8}>
+        <Typography textVariant="title-md">Date & time</Typography>
+        <Flex gap={16} align="center">
+          <DateTimePicker
+            placeholder="Pick the event date & time"
+            sx={{ flex: 1 }}
+            rightSection={<IconCalendar color={t.colors.gray[6]} />}
+            value={form.values.scheduleDateTime?.toDate()}
+            onChange={handleDueDateChange}
+          />
+          <Typography>to</Typography>
+          <DateTimePicker
+            placeholder="Pick the event date & time"
+            sx={{ flex: 1 }}
+            rightSection={<IconCalendar color={t.colors.gray[6]} />}
+          />
+        </Flex>
+      </Stack>
+      <TextInput
+        label={<Typography textVariant="title-md">Venue</Typography>}
+        placeholder="Enter the event venue here"
+        {...form.getInputProps("venue")}
+      />
+      <TextInput
+        label={<Typography textVariant="title-md">Organizer</Typography>}
+        placeholder="Enter the event organizer here"
+        {...form.getInputProps("organizer")}
+      />
+      <TextInput
+        label={
+          <Typography textVariant="title-md">
+            Event Whatsapp Group Link
+          </Typography>
+        }
+        placeholder="Enter the event whatsapp group link here"
+        {...form.getInputProps("whatsappLink")}
+      />
+      <Stack spacing={8}>
+        <Typography textVariant="title-md">Description</Typography>
+        <RichTextEditor editor={editor} sx={{ borderRadius: 8 }}>
+          <RichTextEditor.Toolbar
+            sx={{ borderTopLeftRadius: 8, borderTopRightRadius: 8 }}
+            sticky
+            stickyOffset={60}
+          >
+            <RichTextEditor.ControlsGroup>
+              <RichTextEditor.Bold />
+              <RichTextEditor.Italic />
+              <RichTextEditor.Strikethrough />
+              <RichTextEditor.ClearFormatting />
+            </RichTextEditor.ControlsGroup>
+
+            <RichTextEditor.ControlsGroup>
+              <RichTextEditor.H1 />
+              <RichTextEditor.H2 />
+              <RichTextEditor.H3 />
+              <RichTextEditor.H4 />
+              <RichTextEditor.H5 />
+              <RichTextEditor.H6 />
+            </RichTextEditor.ControlsGroup>
+
+            <RichTextEditor.ControlsGroup>
+              <RichTextEditor.Blockquote />
+              <RichTextEditor.Hr />
+              <RichTextEditor.BulletList />
+              <RichTextEditor.OrderedList />
+            </RichTextEditor.ControlsGroup>
+
+            <RichTextEditor.ControlsGroup>
+              <RichTextEditor.Link />
+              <RichTextEditor.Unlink />
+            </RichTextEditor.ControlsGroup>
+          </RichTextEditor.Toolbar>
+
+          <RichTextEditor.Content sx={{ borderRadius: 8 }} />
+        </RichTextEditor>
+      </Stack>
+    </Stack>
+  );
 };
