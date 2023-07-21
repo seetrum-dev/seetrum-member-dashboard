@@ -16,26 +16,27 @@ import {
 } from "@/types/models/training";
 import { Timestamp, where } from "firebase/firestore";
 
-export const getAllTrainings = async (): Promise<Training[]> => {
+export const getAllOpportunities = async (): Promise<Training[]> => {
   try {
     return await getDocumentsByQuery<Training>(
       COLLECTION_TRAINING,
-      where("tag", "==", "training")
+      where("tag", "==", "opportunity")
     );
   } catch (e) {
     throw e;
   }
 };
 
-export const createTraining = async (
+export const createOpportunity = async (
   payload: CreateTrainingModel,
+  tag: "training" | "opportunity" = "training",
   withTemplate = true
 ): Promise<Training> => {
   try {
     const payloadWithDefault: TrainingModel = {
       ...payload,
       dueDate: payload.deadline ?? Timestamp.fromDate(new Date()),
-      tag: "training",
+      tag,
       description: "",
       thumbnailFileName: kDefaultThumbnailFilename,
       attachments: [],
@@ -54,7 +55,7 @@ export const createTraining = async (
   }
 };
 
-export const createTrainingMaster = async (
+export const createOpportunityMaster = async (
   payload: TrainingModel
 ): Promise<Training> => {
   try {
@@ -68,7 +69,7 @@ export const createTrainingMaster = async (
   }
 };
 
-export const getTrainingById = async (trainingId: string) => {
+export const getOpportunityById = async (trainingId: string) => {
   try {
     const training = await getDocumentById<Training>(
       COLLECTION_TRAINING,
@@ -84,7 +85,7 @@ export const getTrainingById = async (trainingId: string) => {
   }
 };
 
-export const updateTraining = async (
+export const updateOpportunity = async (
   trainingId: string,
   payload: Partial<Training>
 ) => {

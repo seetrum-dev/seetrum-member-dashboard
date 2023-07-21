@@ -13,6 +13,7 @@ import {
   Box,
   Button,
   Container,
+  Divider,
   Flex,
   Group,
   Stack,
@@ -22,6 +23,11 @@ import React, { useState } from "react";
 import { FileUploadButton } from "../../ui/Button/FileUploadButton";
 import { EventMemberPlayground, EventPlayground } from "./EventPlayground";
 import { FormPlayground } from "./FormPlayground";
+import {
+  TrainingMemberPlayground,
+  TrainingPlayground,
+} from "./TrainingPlayground";
+import { UserPlayground } from "./UserPlayground";
 
 export const PlaygroundPage: React.FC = () => {
   const user = useAuthStore((state) => state.user);
@@ -54,12 +60,13 @@ export const PlaygroundPage: React.FC = () => {
             </Button>
           </Flex>
           <Button onClick={getUsersClick}>Get all user</Button>
-          {/* <Divider />
+          <Divider />
           <TrainingPlayground />
           <Divider />
-          <TrainingMemberPlayground /> */}
-          {/* <EventPlayground /> */}
-          {/* <EventMemberPlayground /> */}
+          <UserPlayground />
+          <TrainingMemberPlayground />
+          <EventPlayground />
+          <EventMemberPlayground />
           <FormPlayground />
           <Box>
             <pre>{JSON.stringify(fileInfo, null, 2)}</pre>

@@ -21,9 +21,9 @@ const fIDummy: FileInfo = {
 };
 
 export const TrainingApplicationPage: React.FC = () => {
-  const [step, setStep, training] =
+  const [step, setStep, training, MAX_STEP] =
     useOutletContext<
-      [number, React.Dispatch<React.SetStateAction<number>>, Training]
+      [number, React.Dispatch<React.SetStateAction<number>>, Training, number]
     >();
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
@@ -106,13 +106,17 @@ export const TrainingApplicationPage: React.FC = () => {
         applicant.requiredFiles = applicant.requiredFiles.filter(
           (f) => f.tag !== fIDummy.tag
         );
-      if (form.isValid()) {
-        const newTrainingMember = await createTrainingMember(applicant);
-        addTrainingMember(newTrainingMember);
-        user && (await getTrainingMemberByMemberId(user.id));
-        navigate("/mytrainings");
+      if (!form.isValid()) {
+        console.error(form.errors);
+        throw new Error("Please fill all required fields");
       }
+      const newTrainingMember = await createTrainingMember(applicant);
+      addTrainingMember(newTrainingMember);
+      user && (await getTrainingMemberByMemberId(user.id));
+      navigate("/mytrainings");
     } catch (error) {
+      console.error(error);
+
       showErrorNotif({
         title: "Error occurred while applying you in this training.",
       });
@@ -128,7 +132,8 @@ export const TrainingApplicationPage: React.FC = () => {
         name: user.name,
         email: user.email,
         phoneNumber: user.phoneNumber,
-        address: user.address,
+        address: user.userType === "organization" ? user.address : "",
+        province: user.userType === "individual" ? user.address : "",
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -140,10 +145,11 @@ export const TrainingApplicationPage: React.FC = () => {
       form.setValues({
         trainingId: training.id,
         requiredFiles: Array(training.fileRequirements.length).fill(fIDummy),
-        additionalData: training.formMetas?.map((f) => ({
-          label: f.label,
-          value: "",
-        })),
+        additionalData:
+          training.formMetas?.map((f) => ({
+            label: f.label,
+            value: "",
+          })) ?? [],
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -184,17 +190,15 @@ export const TrainingApplicationPage: React.FC = () => {
               disabled={!form.isValid()}
               onClick={(e) => {
                 if (!form.validate().hasErrors) {
-                  if (step < 2) {
-                    setStep((_step) =>
-                      _step < 1 + Number(!!training.formMetas) ? _step + 1 : 2
-                    );
+                  if (step < MAX_STEP) {
+                    setStep((_step) => (_step < MAX_STEP ? _step + 1 : _step));
                     e.preventDefault();
                     e.stopPropagation();
                   }
                 }
               }}
             >
-              {step === 2 ? "Submit application" : "Next"}
+              {step === MAX_STEP ? "Submit application" : "Next"}
             </Button>
           </Flex>
         </Container>

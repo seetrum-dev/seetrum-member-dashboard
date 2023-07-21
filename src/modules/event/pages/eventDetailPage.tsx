@@ -1,4 +1,4 @@
-import { pretyDateTime } from "@/lib/utils";
+import { isMeetingLink, pretyDateTime } from "@/lib/utils";
 import { ProtectedPage } from "@/modules/auth/components/ProtectedPage";
 import { useFileURLStore } from "@/services/firebase/storage";
 import { BackButton } from "@/ui/Button";
@@ -19,6 +19,7 @@ import { useEventDetail } from "../store/useEventDetail";
 import { useEventMemberList } from "../store/useEventMemberList";
 import { useAuthStore } from "@/modules/auth/stores/authStore";
 import { showErrorNotif } from "@/ui/notifications";
+import { Timestamp } from "firebase/firestore";
 
 export const EventDetailPage: React.FC = () => {
   const { id: eventId } = useParams();
@@ -26,7 +27,8 @@ export const EventDetailPage: React.FC = () => {
   const { event, loading, getEvent } = useEventDetail();
   const { getEventMembers, getByEventId, memberId } = useEventMemberList();
   const eventMember = eventId ? getByEventId(eventId) : undefined;
-  const isOnlineEvent = () => Boolean(event?.venue.includes("://"));
+  const isOnlineEvent = () =>
+    event?.venue !== undefined ? isMeetingLink(event.venue) : undefined;
 
   useEffect(() => {
     if (user && (!memberId || memberId !== user.id))
@@ -65,6 +67,7 @@ export const EventDetailPage: React.FC = () => {
         overflow: "hidden",
         borderRadius: "8px",
         borderColor: t.colors.platinum[2],
+        [t.fn.smallerThan("sm")]: { minWidth: "100%" },
         ...(sx && sx(t)),
       })}
     />
@@ -148,13 +151,20 @@ const EventDataField: React.FC<{
   loading?: boolean;
 }> = ({ label, data, loading }) => {
   return (
-    <Flex gap={16}>
+    <Flex
+      gap={16}
+      rowGap={4}
+      sx={(t) => ({ [t.fn.smallerThan("sm")]: { flexDirection: "column" } })}
+    >
       <Typography miw={120} textVariant="label-lg">
         {label}
       </Typography>
       <Skeleton
         visible={!data || loading === true}
-        width={!data || loading === true ? "30%" : "100%"}
+        sx={(t) => ({
+          width: !data || loading === true ? "30%" : "100%",
+          [t.fn.smallerThan("sm")]: { width: "100%" },
+        })}
       >
         <Typography sx={{ flex: 1 }} textVariant="body-md">
           {loading ? "-" : !data ? "-" : data}
@@ -170,9 +180,36 @@ const AddToCalendar: React.FC<{ isRegistered?: boolean }> = ({
   const { id: eventId } = useParams();
   const { user } = useAuthStore();
   const { joinEvent } = useEventMemberList();
+  const { event, getEvent } = useEventDetail();
 
-  // TODO: Implement this handler
-  const handleAddToCalendar = () => {};
+  useEffect(() => {
+    eventId && getEvent(eventId);
+  }, [getEvent, eventId]);
+
+  const handleAddToCalendar = () => {
+    if (!event) return;
+    const timeStampFormater = (time: Timestamp): string =>
+      time
+        .toDate()
+        .toISOString()
+        .replace(/[-:]/g, "")
+        .replace(/\.\d{3}/g, "");
+
+    const endTime = event.scheduleDateTime.toDate();
+    endTime.setSeconds(3600 * 3);
+
+    const uri = new URL(
+      `https://calendar.google.com/calendar/r/eventedit?&text=${
+        event.title
+      }&dates=${timeStampFormater(event.scheduleDateTime)}/${timeStampFormater(
+        Timestamp.fromDate(endTime) // TODO: change to end of event schedule date
+      )}&details=${event.description}&ctz=${"Asia/Jakarta"}&location=${
+        event.venue
+      }&sf=true&output=xml`
+    );
+
+    window.open(uri.toString(), "_blank");
+  };
   const handleRegister = async () => {
     if (eventId && user)
       try {
@@ -183,17 +220,16 @@ const AddToCalendar: React.FC<{ isRegistered?: boolean }> = ({
       }
   };
   return (
-    <Flex
-      justify="space-between"
-      align="center"
+    <Stack
       maw={621}
-      gap={16}
+      spacing={16}
       sx={(t) => ({
         border: isRegistered ? "none" : "1px solid",
         borderColor: t.fn.rgba(t.colors.night[5], 0.12),
         borderRadius: 8,
         padding: 16,
         backgroundColor: isRegistered ? t.colors.moonstone[0] : "transparent",
+        [t.fn.smallerThan("sm")]: { flexDirection: "column" },
       })}
     >
       <Typography sx={{ flex: 1 }} textVariant="body-lg">
@@ -201,13 +237,24 @@ const AddToCalendar: React.FC<{ isRegistered?: boolean }> = ({
           ? "You have already registered for this event."
           : "Interested in joining this event?"}
       </Typography>
-      <Button
-        sx={{ borderRadius: 8 }}
-        onClick={isRegistered ? handleAddToCalendar : handleRegister}
-      >
-        {isRegistered ? "Add event to Google Calendar" : "Join now for free"}
-      </Button>
-    </Flex>
+      <Flex gap={16} wrap={"wrap"}>
+        {event?.whatsappLink && (
+          <Button
+            radius={8}
+            onClick={(e) => window.open(event.whatsappLink, "_blank")}
+          >
+            Join event Whatsapp group
+          </Button>
+        )}
+        <Button
+          sx={{ borderRadius: 8 }}
+          onClick={isRegistered ? handleAddToCalendar : handleRegister}
+          variant={event?.whatsappLink ? "outline" : "filled"}
+        >
+          {isRegistered ? "Add event to Google Calendar" : "Join now for free"}
+        </Button>
+      </Flex>
+    </Stack>
   );
 };
 

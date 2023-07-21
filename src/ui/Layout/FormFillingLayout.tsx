@@ -59,6 +59,7 @@ export const FormFillingLayout = () => {
     }
   }, [training]);
 
+  const MAX_STEP = steps.length - 1;
   return (
     <AppShell
       header={<Header opened={false} setOpened={() => {}} withoutNavigation />}
@@ -101,7 +102,7 @@ export const FormFillingLayout = () => {
                   </Typography>
                   <Typography>{steps[step].description}</Typography>
                 </Flex>
-                <Outlet context={[step, setStep, training]} />
+                <Outlet context={[step, setStep, training, MAX_STEP]} />
               </Flex>
               <MediaQuery smallerThan={"sm"} styles={{ display: "none" }}>
                 <Flex w={308} sx={{ flexShrink: 0 }}>

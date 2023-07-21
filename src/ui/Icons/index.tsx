@@ -30,6 +30,7 @@ import {
   BsPlus,
   BsCardHeading,
   BsPencilFill,
+  BsSave2,
 } from "react-icons/bs";
 
 export const IconArrowLeft = BsArrowLeft;
@@ -45,6 +46,7 @@ export const IconPeople = BsPeople;
 export const IconX = BsX;
 export const IconPlus = BsPlus;
 export const IconHome = BsHouse;
+export const IconSave = BsSave2;
 export const IconCalendar = BsCalendarWeek;
 export const IconLightBulb = BsLightbulb;
 export const IconBriefcase = BsBriefcase;

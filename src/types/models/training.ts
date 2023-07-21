@@ -13,6 +13,7 @@ export type CreateTrainingModel = {
 
 export type TrainingModel = CreateTrainingModel & {
   dueDate: Timestamp;
+  tag: "training" | "opportunity";
   description: string;
   thumbnailFileName: string;
   attachments: FileInfo[];
@@ -48,6 +49,7 @@ export const fileRequirementImageDummy: FileRequirement = {
 
 export const trainingModelDummy: TrainingModel = {
   title: "Electrical Energy System Auditor",
+  tag: "training",
   trainerName: "Enertec",
   thumbnailFileName: "1684857025848-hero-ilustration.png",
   description: `

@@ -38,6 +38,11 @@ export const pretyDateTime = (date: Date) => {
   });
 };
 
+export const yyyymmddDateFormater = (date: Date) => {
+  const dt = new Date(date);
+  return dt.toISOString().slice(0, 10).replace(/-/g, "");
+};
+
 export const formatSize = (bytes: number) => {
   if (bytes < 1024) {
     return bytes + " B";
@@ -70,3 +75,38 @@ export const kLineClamp = (n: number): React.CSSProperties & any => ({
   WebkitLineClamp: n.toString(),
   WebkitBoxOrient: "vertical",
 });
+
+export const isMeetingLink = (string?: string): boolean => {
+  if (!string) return false;
+  const urlRegex = /^(https?):\/\/[^\s/$.?#].[^\s]*$/i;
+  const isUrl = urlRegex.test(string);
+  if (!isUrl) return false;
+  const meetingServices = [
+    "zoom",
+    "teams",
+    "meet.google",
+    "webex",
+    "gotomeeting",
+    "bluejeans",
+    "join.me",
+  ];
+  const mapsServices = ["google.com/maps", "maps.google"];
+  const isMeetingService = meetingServices.some((service) =>
+    string.includes(service)
+  );
+  const isMapsService = mapsServices.some((service) =>
+    string.includes(service)
+  );
+  return isMeetingService && !isMapsService;
+};
+
+export const mergeObjects = <T extends object>(
+  arr: T[]
+): Record<keyof T, any> => {
+  return arr.reduce((result, obj) => {
+    Object.keys(obj).forEach((key) => {
+      result[key as keyof T] = obj[key as keyof T];
+    });
+    return result;
+  }, {} as Record<keyof T, any>);
+};

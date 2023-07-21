@@ -37,11 +37,25 @@ import {
   getTrainingById,
   updateTraining,
 } from "../trainings/services/trainingService";
+import { FormMeta } from "@/types/models/inputMeta";
+import { getAllOpportunities } from "../trainings/services/opportunityService";
 
 export const TrainingPlayground: React.FC = () => {
   const [trainings, setTrainings] = useState<Training[]>();
   const [loading, setLoading] = useState(false);
   const [value, setValue] = useState("");
+
+  const fetchAllOpportunities = async () => {
+    setLoading(true);
+    try {
+      const newTrainings = await getAllOpportunities();
+      console.log(newTrainings);
+      setTrainings(newTrainings);
+    } catch (error) {
+      console.error(error);
+    }
+    setLoading(false);
+  };
 
   const fetchAllTraining = async () => {
     setLoading(true);
@@ -71,6 +85,7 @@ export const TrainingPlayground: React.FC = () => {
     const newTrainingModel: TrainingModel = {
       title: "Pelatihan Auditor Termal dan Elektrikal",
       description: descHTML,
+      tag: "training",
       dueDate: Timestamp.fromDate(
         new Date(new Date().setDate(new Date().getDate() + 7))
       ),
@@ -140,6 +155,55 @@ export const TrainingPlayground: React.FC = () => {
     setLoading(false);
   };
 
+  const updateCustomForm = async () => {
+    setLoading(true);
+    try {
+      const newFormMetas: FormMeta[] = [
+        {
+          inputType: "input",
+          label: "Social Media  (Linkedin/Instagram/Twitter/etc)",
+          required: true,
+          data: [],
+        },
+        {
+          inputType: "select",
+          label: "Choose the position you want",
+          required: true,
+          data: [
+            "Marketing and Communication: Social Media",
+            "Marketing and Communication: Website",
+            "Graphic Design",
+            "Media Partnership",
+            "Event",
+            "Community Development",
+            "Knowledge Hub",
+            "Training",
+            "Legal",
+          ],
+        },
+
+        {
+          inputType: "input",
+          label: "Reason for choosing the position",
+          required: true,
+          data: [],
+        },
+        {
+          inputType: "input",
+          label:
+            "General EE Question: What do you know about Energy Efficiency?",
+
+          required: true,
+          data: [],
+        },
+      ];
+      await updateTraining(value, { formMetas: newFormMetas });
+    } catch (e) {
+      alert("erro");
+    }
+    setLoading(false);
+  };
+
   const updateTrainingTitle = (title: string) => async () => {
     setLoading(true);
     try {
@@ -150,6 +214,21 @@ export const TrainingPlayground: React.FC = () => {
     setLoading(false);
   };
 
+  const updateAllTrainingTag =
+    (tag: "training" | "opportunity") => async () => {
+      setLoading(true);
+      try {
+        if (!trainings) throw new Error("no trainings");
+        const promises = await Promise.all(
+          trainings.map((t) => updateTraining(t.id, { tag }))
+        );
+        // await fetchAllTraining();
+      } catch (e) {
+        alert("erro");
+      }
+      setLoading(false);
+    };
+
   return (
     <>
       <TextInput
@@ -159,6 +238,9 @@ export const TrainingPlayground: React.FC = () => {
       <Group>
         <Button loading={loading} onClick={fetchAllTraining}>
           Get All Training
+        </Button>
+        <Button loading={loading} onClick={fetchAllOpportunities}>
+          Get All Opportunities
         </Button>
         <Button loading={loading} onClick={postTraining}>
           Create Training
@@ -182,11 +264,25 @@ export const TrainingPlayground: React.FC = () => {
         </Button>
       </Group>
       <Group>
-        <Button loading={loading} onClick={updateTrainingTitle("Rosetta")}>
-          update title to "Rosetta"
+        <Button loading={loading} onClick={updateCustomForm}>
+          update add custom form
         </Button>
         <Button loading={loading} onClick={updateTrainingTitle("Ruby Hoshino")}>
           update title to "Ruby Hoshino"
+        </Button>
+        <Button
+          loading={loading}
+          color="yellow"
+          onClick={updateAllTrainingTag("opportunity")}
+        >
+          update all training tag to "opportunity"
+        </Button>
+        <Button
+          loading={loading}
+          color="yellow"
+          onClick={updateAllTrainingTag("training")}
+        >
+          update all training tag to "training"
         </Button>
       </Group>
       <Stack>
@@ -195,6 +291,9 @@ export const TrainingPlayground: React.FC = () => {
             <Paper p={"sm"} withBorder key={t.id}>
               <Typography textVariant="title-sm">{t.id}</Typography>
               <Typography textVariant="title-md">{t.title}</Typography>
+              <Typography c="cyan" textVariant="title-sm">
+                {t.tag ?? "no tag"}
+              </Typography>
             </Paper>
           ))}
       </Stack>

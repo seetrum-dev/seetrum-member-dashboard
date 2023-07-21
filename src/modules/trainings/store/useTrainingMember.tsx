@@ -71,12 +71,11 @@ export const useTrainingMember = create<TrainingMemberStore>((set, get) => ({
   },
   addTrainingMember: (trainingMember) =>
     set((state) => {
-      if (state.trainingMember) {
-        state.trainingMember.push(trainingMember);
-        return { trainingMember: state.trainingMember, isValid: false };
-      } else {
-        return { trainingMember: [trainingMember], isValid: false };
-      }
+      const currentTrainingMember = state.trainingMember ?? [];
+      return {
+        trainingMember: [trainingMember, ...currentTrainingMember],
+        isValid: false,
+      };
     }),
   updateTrainingMember: (trainingMember) =>
     set((state) => ({

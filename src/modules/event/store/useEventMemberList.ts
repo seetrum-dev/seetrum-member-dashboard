@@ -26,8 +26,10 @@ export const useEventMemberList = create(
       set({ loading: true });
       const id = get().memberId;
       const eventMembers = get().eventMembers;
-      if (id && eventMembers && id === memberId && get().isValid)
+      if (id && eventMembers && id === memberId && get().isValid) {
+        set({ loading: false });
         return eventMembers;
+      }
 
       const events = await getEventMemberByMemberId(memberId);
       set({ eventMembers: events, memberId, isValid: true, loading: false });
