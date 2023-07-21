@@ -26,12 +26,14 @@ export const getAllTrainings = async (): Promise<Training[]> => {
 
 export const createTraining = async (
   payload: CreateTrainingModel,
+  tag: "training" | "opportunity" = "training",
   withTemplate = true
 ): Promise<Training> => {
   try {
     const payloadWithDefault: TrainingModel = {
       ...payload,
       dueDate: payload.deadline ?? Timestamp.fromDate(new Date()),
+      tag,
       description: "",
       thumbnailFileName: kDefaultThumbnailFilename,
       attachments: [],

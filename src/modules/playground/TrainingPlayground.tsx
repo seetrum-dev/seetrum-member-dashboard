@@ -72,6 +72,7 @@ export const TrainingPlayground: React.FC = () => {
     const newTrainingModel: TrainingModel = {
       title: "Pelatihan Auditor Termal dan Elektrikal",
       description: descHTML,
+      tag: "training",
       dueDate: Timestamp.fromDate(
         new Date(new Date().setDate(new Date().getDate() + 7))
       ),
@@ -200,6 +201,21 @@ export const TrainingPlayground: React.FC = () => {
     setLoading(false);
   };
 
+  const updateAllTrainingTag =
+    (tag: "training" | "opportunity") => async () => {
+      setLoading(true);
+      try {
+        if (!trainings) throw new Error("no trainings");
+        const promises = await Promise.all(
+          trainings.map((t) => updateTraining(t.id, { tag }))
+        );
+        await getAllTrainings();
+      } catch (e) {
+        alert("erro");
+      }
+      setLoading(false);
+    };
+
   return (
     <>
       <TextInput
@@ -238,6 +254,9 @@ export const TrainingPlayground: React.FC = () => {
         <Button loading={loading} onClick={updateTrainingTitle("Ruby Hoshino")}>
           update title to "Ruby Hoshino"
         </Button>
+        <Button loading={loading} onClick={updateAllTrainingTag("training")}>
+          update all training tag to "training"
+        </Button>
       </Group>
       <Stack>
         {trainings &&
@@ -245,6 +264,9 @@ export const TrainingPlayground: React.FC = () => {
             <Paper p={"sm"} withBorder key={t.id}>
               <Typography textVariant="title-sm">{t.id}</Typography>
               <Typography textVariant="title-md">{t.title}</Typography>
+              <Typography c="cyan" textVariant="title-sm">
+                {t.tag ?? "no tag"}
+              </Typography>
             </Paper>
           ))}
       </Stack>

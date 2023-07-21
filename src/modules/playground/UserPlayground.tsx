@@ -5,11 +5,26 @@ import { Button, Group, Paper, Stack, TextInput } from "@mantine/core";
 import { useState } from "react";
 import { getUserById } from "../auth/services/authService";
 import { getAllUsers } from "../user/services/userService";
+import { ExportToCsv } from "export-to-csv";
 
 export const UserPlayground: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
   const [value, setValue] = useState("");
+
+  const options = {
+    fieldSeparator: ",",
+    quoteStrings: '"',
+    decimalSeparator: ".",
+    showLabels: true,
+    useTextFile: false,
+    useBom: true,
+    useKeysAsHeaders: true,
+    filename: "users-" + Date.now(),
+    // headers: ['Column 1', 'Column 2', etc...] <-- Won't work with useKeysAsHeaders present!
+  };
+
+  const csvExporter = new ExportToCsv(options);
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     setValue(e.target.value);
@@ -39,6 +54,20 @@ export const UserPlayground: React.FC = () => {
     setLoading(false);
   };
 
+  const handleExport = () => {
+    if (users.length === 0) return;
+    const formatted = users.map((u) => ({
+      ...u,
+      // update createdAt and updatedAt to string for csv format of yyyy-mm-dd
+      isAdmin: !!u.isAdmin,
+      createdAt: u.createdAt?.toDate().toISOString().split("T")[0],
+      updatedAt: u.updatedAt?.toDate().toISOString().split("T")[0],
+      // createdAt: u.createdAt?.toDate().toLocaleString(),
+      // updatedAt: u.updatedAt?.toDate().toLocaleString(),
+    }));
+    csvExporter.generateCsv(formatted);
+  };
+
   return (
     <Paper withBorder p="xs">
       <Typography textVariant="title-lg">User</Typography>
@@ -51,8 +80,8 @@ export const UserPlayground: React.FC = () => {
           <Button onClick={handleGetById} loading={loading}>
             Get user by id
           </Button>
-          <Button color="green" onClick={console.log} loading={loading}>
-            Update (not yet)
+          <Button color="green" onClick={handleExport} loading={loading}>
+            Export
           </Button>
           <Button ml="auto" color="red" onClick={() => setUsers([])}>
             Clear
