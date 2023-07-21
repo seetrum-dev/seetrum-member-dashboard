@@ -49,7 +49,7 @@ export const CreateTrainingModal: React.FC<CreateTrainingModalProps> = ({
 
   const handleSubmit = form.onSubmit(async (value) => {
     try {
-      const res = await createTraining(value, "training", isWithTemplate);
+      const res = await createTraining(value, isWithTemplate);
       navigate(`/admin/trainings/${res.id}`);
     } catch (e) {
       console.error(e);

@@ -38,11 +38,24 @@ import {
   updateTraining,
 } from "../trainings/services/trainingService";
 import { FormMeta } from "@/types/models/inputMeta";
+import { getAllOpportunities } from "../trainings/services/opportunityService";
 
 export const TrainingPlayground: React.FC = () => {
   const [trainings, setTrainings] = useState<Training[]>();
   const [loading, setLoading] = useState(false);
   const [value, setValue] = useState("");
+
+  const fetchAllOpportunities = async () => {
+    setLoading(true);
+    try {
+      const newTrainings = await getAllOpportunities();
+      console.log(newTrainings);
+      setTrainings(newTrainings);
+    } catch (error) {
+      console.error(error);
+    }
+    setLoading(false);
+  };
 
   const fetchAllTraining = async () => {
     setLoading(true);
@@ -209,7 +222,7 @@ export const TrainingPlayground: React.FC = () => {
         const promises = await Promise.all(
           trainings.map((t) => updateTraining(t.id, { tag }))
         );
-        await getAllTrainings();
+        // await fetchAllTraining();
       } catch (e) {
         alert("erro");
       }
@@ -225,6 +238,9 @@ export const TrainingPlayground: React.FC = () => {
       <Group>
         <Button loading={loading} onClick={fetchAllTraining}>
           Get All Training
+        </Button>
+        <Button loading={loading} onClick={fetchAllOpportunities}>
+          Get All Opportunities
         </Button>
         <Button loading={loading} onClick={postTraining}>
           Create Training
@@ -254,7 +270,18 @@ export const TrainingPlayground: React.FC = () => {
         <Button loading={loading} onClick={updateTrainingTitle("Ruby Hoshino")}>
           update title to "Ruby Hoshino"
         </Button>
-        <Button loading={loading} onClick={updateAllTrainingTag("training")}>
+        <Button
+          loading={loading}
+          color="yellow"
+          onClick={updateAllTrainingTag("opportunity")}
+        >
+          update all training tag to "opportunity"
+        </Button>
+        <Button
+          loading={loading}
+          color="yellow"
+          onClick={updateAllTrainingTag("training")}
+        >
           update all training tag to "training"
         </Button>
       </Group>
