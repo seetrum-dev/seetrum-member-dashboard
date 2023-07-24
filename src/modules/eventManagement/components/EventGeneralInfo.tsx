@@ -1,4 +1,5 @@
 import { pretyDateTime } from "@/lib/utils";
+import { updateScheduledEvent } from "@/modules/event/services/eventService";
 import { useEventDetail } from "@/modules/event/store/useEventDetail";
 import { useEventsList } from "@/modules/event/store/useEventList";
 import { ScheduledEvent } from "@/types/models/scheduledEvent";
@@ -19,7 +20,7 @@ import {
 import { DateTimePicker } from "@mantine/dates";
 import { UseFormReturnType, isNotEmpty, useForm } from "@mantine/form";
 import { Link, RichTextEditor } from "@mantine/tiptap";
-import { useEditor } from "@tiptap/react";
+import { Editor, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { Timestamp } from "firebase/firestore";
 import { useEffect, useState } from "react";
@@ -29,17 +30,31 @@ export const ManageEventGeneralInfo = () => {
   const [editState, setMode] = useState<"edit" | "view">("view");
 
   const { id } = useParams();
-  const { event, getEvent, eventId } = useEventDetail();
+  const { event, getEvent, eventId, revalidate } = useEventDetail();
   const { setValidStatus } = useEventsList();
 
+  const initialValues = { ...event };
+  delete initialValues.id;
+  delete initialValues.createdAt;
+  delete initialValues.updatedAt;
+  delete initialValues.thumbnailFileName;
+
   const form = useForm({
-    initialValues: event,
+    initialValues,
     validate: {
       title: isNotEmpty("Title can not be empty"),
       organizer: isNotEmpty("Trainer name can not be empty"),
       venue: isNotEmpty("Due date can not be empty"),
     },
   });
+
+  const editor = useEditor(
+    {
+      extensions: [StarterKit, Link],
+      content: form.values.description,
+    },
+    [form.values.description]
+  );
 
   useEffect(() => {
     if (id === eventId) return;
@@ -53,14 +68,18 @@ export const ManageEventGeneralInfo = () => {
   }, [event]);
 
   const handleSavingEvent = async () => {
-    // update event through API calls
-    console.log(1349, form.values, form.isDirty());
+    event &&
+      (await updateScheduledEvent(event.id, {
+        ...form.values,
+        description: editor?.getHTML(),
+      }));
+    await revalidate();
     setValidStatus(false);
   };
 
-  const toggleState = () => {
+  const toggleState = async () => {
     if (editState === "edit") {
-      handleSavingEvent();
+      await handleSavingEvent();
     }
     setMode(editState === "edit" ? "view" : "edit");
   };
@@ -87,7 +106,7 @@ export const ManageEventGeneralInfo = () => {
         </Button>
       </Flex>
       {editState === "edit" ? (
-        <GeneralInfoEditor form={form} />
+        <GeneralInfoEditor form={form} editor={editor} />
       ) : (
         <GeneralInfoViewer event={event} />
       )}
@@ -99,7 +118,7 @@ const GeneralInfoViewer = ({ event }: { event?: ScheduledEvent }) => {
   return (
     <Stack>
       <Stack spacing={8}>
-        <Typography variant="title-md">Event Title</Typography>
+        <Typography textVariant="title-md">Event Title</Typography>
         <Skeleton visible={event === undefined} w={event ? "100%" : "45%"}>
           <Typography>{event?.title || "-"}</Typography>
         </Skeleton>
@@ -149,20 +168,15 @@ const GeneralInfoViewer = ({ event }: { event?: ScheduledEvent }) => {
 
 const GeneralInfoEditor = ({
   form,
+  editor,
 }: {
   form: UseFormReturnType<
-    ScheduledEvent,
-    (values: ScheduledEvent) => ScheduledEvent
+    Partial<ScheduledEvent>,
+    (values: Partial<ScheduledEvent>) => Partial<ScheduledEvent>
   >;
+  editor: Editor | null;
 }) => {
   const t = useMantineTheme();
-  const editor = useEditor(
-    {
-      extensions: [StarterKit, Link],
-      content: form.values.description,
-    },
-    [form.values.description]
-  );
 
   const handleDueDateChange = (value: Date) => {
     value.setSeconds(0);
