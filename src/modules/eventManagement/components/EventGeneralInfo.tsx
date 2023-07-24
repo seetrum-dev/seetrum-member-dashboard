@@ -31,11 +31,6 @@ export const ManageEventGeneralInfo = () => {
   const { id } = useParams();
   const { event, getEvent, eventId } = useEventDetail();
   const { setValidStatus } = useEventsList();
-  useEffect(() => {
-    if (id === eventId) return;
-    id && getEvent(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
 
   const form = useForm({
     initialValues: event,
@@ -45,6 +40,17 @@ export const ManageEventGeneralInfo = () => {
       venue: isNotEmpty("Due date can not be empty"),
     },
   });
+
+  useEffect(() => {
+    if (id === eventId) return;
+    id && getEvent(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
+
+  useEffect(() => {
+    if (event && !form.isDirty()) form.setValues(event);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [event]);
 
   const handleSavingEvent = async () => {
     // update event through API calls
@@ -149,7 +155,6 @@ const GeneralInfoEditor = ({
     (values: ScheduledEvent) => ScheduledEvent
   >;
 }) => {
-  console.log(1349, form);
   const t = useMantineTheme();
   const editor = useEditor(
     {
