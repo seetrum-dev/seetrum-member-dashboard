@@ -122,6 +122,14 @@ export const IconAdminAward = ({ size }: { size?: number | string }) => (
     />
   </AdminIconWrapper>
 );
+export const IconAdminCalendar = ({ size }: { size?: number | string }) => (
+  <AdminIconWrapper>
+    <IconCalendar
+      size={size ? (typeof size === "number" ? `${size}px` : size) : "20px"}
+    />
+  </AdminIconWrapper>
+);
+
 export const IconAdminPeople = ({ size }: { size?: number | string }) => (
   <AdminIconWrapper>
     <IconPeople
