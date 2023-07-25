@@ -4,7 +4,7 @@ import { BackButton } from "@/ui/Button";
 import { IconCardHeading, IconClockHistory, IconPeople } from "@/ui/Icons";
 import { TabBar, TabbarData } from "@/ui/Tabbar/tabBar";
 import { Typography } from "@/ui/Typography";
-import { Divider, Flex, Skeleton, Stack, ThemeIcon } from "@mantine/core";
+import { Flex, Skeleton, Stack, ThemeIcon } from "@mantine/core";
 import { Timestamp } from "firebase/firestore";
 import { useEffect } from "react";
 import { Outlet, useParams } from "react-router-dom";
@@ -20,19 +20,24 @@ export const ManageEventDetailsLayout = () => {
 
   return (
     <Stack sx={{ flex: 1, height: "100%", position: "relative" }}>
-      <BackButton to={".."} />
-      <Headers
-        title={event?.title}
-        updatedAt={event?.updatedAt}
-        loading={loading}
-      />
       <Stack
-        pt={8}
-        mt={-8}
-        sx={{ position: "sticky", top: 60, backgroundColor: "white" }}
+        mx={-20}
+        px={20}
+        sx={(t) => ({
+          zIndex: 20,
+          background: "white",
+          position: "sticky",
+          top: -60,
+        })}
+        spacing={0}
       >
+        <BackButton to={".."} />
+        <Headers
+          title={event?.title}
+          updatedAt={event?.updatedAt}
+          loading={loading}
+        />
         <TabBar data={manageTrainingTabbarData} />
-        <Divider />
       </Stack>
       <Stack sx={{ height: "100%" }}>
         <Outlet />
