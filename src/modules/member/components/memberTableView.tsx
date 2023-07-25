@@ -1,5 +1,5 @@
 import { kRowsPerPageOptions } from "@/lib/constants";
-import { mergeObjects, pretyDateTime } from "@/lib/utils";
+import { pretyDateTime } from "@/lib/utils";
 import { User } from "@/types";
 import { ExportMenu, TablePseudoExportButton } from "@/ui/Button/ExportMenu";
 import { IconEditSquare } from "@/ui/Icons";
@@ -58,12 +58,6 @@ export const MembersTableView = () => {
   const columns = useMemo<MRT_ColumnDef<User>[]>(
     () => [
       {
-        id: "id",
-        accessorKey: "id",
-        header: "",
-        enableGlobalFilter: false,
-      },
-      {
         header: "Member Name",
         accessorKey: "name",
       },
@@ -72,6 +66,7 @@ export const MembersTableView = () => {
         accessorKey: "email",
       },
       {
+        id: "role",
         header: "Role",
         enableGlobalFilter: false,
         size: 100,
@@ -93,9 +88,10 @@ export const MembersTableView = () => {
         },
       },
       {
+        id: "createdAt",
         header: "Joining at",
         enableGlobalFilter: false,
-        accessorKey: "createdAt.toString",
+        enableColumnFilter: false,
         size: 100,
         accessorFn(originalRow) {
           return Boolean(originalRow.createdAt.toDate());
@@ -106,29 +102,37 @@ export const MembersTableView = () => {
       },
       {
         id: "actions",
+        accessorFn(originalRow) {
+          return originalRow.id;
+        },
+        enableColumnFilter: false,
         enableGlobalFilter: false,
         header: "",
-        size: 40,
+        size: 30,
+        enablePinning: true,
         Cell(props) {
           return (
-            <Button
-              variant="subtle"
-              size="small"
-              sx={{ borderRadius: 100, padding: 4 }}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                navigate(props.row.getValue("id"));
-                setActiveIndex(props.row.index);
-              }}
-            >
-              <IconEditSquare />
-            </Button>
+            <Flex w="100%" justify="center">
+              <Button
+                variant="subtle"
+                size="small"
+                sx={{ borderRadius: 100, padding: 4 }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  navigate(props.row.getValue("id"));
+                  setActiveIndex(props.row.index);
+                }}
+              >
+                <IconEditSquare />
+              </Button>
+            </Flex>
           );
         },
       },
     ],
-    [navigate]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [users, organization]
   );
 
   const orgColumns = useMemo<MRT_ColumnDef<User>[]>(
@@ -150,6 +154,7 @@ export const MembersTableView = () => {
       {
         header: "Joining at",
         enableGlobalFilter: false,
+        enableColumnFilter: false,
         accessorKey: "createdAt.toString",
         size: 100,
         accessorFn(originalRow) {
@@ -162,23 +167,26 @@ export const MembersTableView = () => {
       {
         id: "actions",
         enableGlobalFilter: false,
+        enableColumnFilter: false,
         header: "",
-        size: 40,
+        size: 30,
         Cell(props) {
           return (
-            <Button
-              variant="subtle"
-              size="small"
-              sx={{ borderRadius: 100, padding: 4 }}
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                navigate(props.row.getValue("id"));
-                setActiveIndex(props.row.index);
-              }}
-            >
-              <IconEditSquare />
-            </Button>
+            <Flex w="100%" justify="center">
+              <Button
+                variant="subtle"
+                size="small"
+                sx={{ borderRadius: 100, padding: 4 }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  navigate(props.row.getValue("id"));
+                  setActiveIndex(props.row.index);
+                }}
+              >
+                <IconEditSquare />
+              </Button>
+            </Flex>
           );
         },
       },
@@ -231,6 +239,19 @@ export const MembersTableView = () => {
         mantineTableHeadRowProps={{
           sx: (t) => ({ background: t.colors.gray[0] }),
         }}
+        mantineTableHeadCellProps={{
+          sx: (t) => ({
+            "& .mantine-TableHeadCell-Content": {
+              justifyContent: "space-between",
+              paddingInlineEnd: 12,
+              borderRight: "1px solid",
+              borderColor: t.fn.rgba(t.colors.night[5], 0.12),
+              ":last-child": {
+                borderRight: "none",
+              },
+            },
+          }),
+        }}
         mantineTableBodyRowProps={({ row }) => ({
           sx: { cursor: "pointer" },
           onClick: (e) => {
@@ -245,6 +266,7 @@ export const MembersTableView = () => {
           sx: { borderRadius: 16, boxShadow: "none" },
         }}
         initialState={{
+          columnPinning: { right: ["actions"] },
           density: "xs",
           columnVisibility: { id: false },
         }}
@@ -252,16 +274,18 @@ export const MembersTableView = () => {
         mantineTopToolbarProps={{ display: "none" }}
         renderTopToolbarCustomActions={({ table }) => {
           const dataFlatter = (rows: User[]) =>
-            rows.map((row, i) =>
-              isOrg
+            rows.map((row, i) => {
+              const dt = isOrg
                 ? {
                     id: row.id,
                     "organization name": row.name,
-                    email: row.email,
-                    address: row.address,
+                    "organization email": row.email,
+                    industry: row.organization?.industry || "-",
                     phone: row.phoneNumber,
-                    ...mergeObjects(row.organization ? [row.organization] : []),
-                    "joining at": pretyDateTime(row.createdAt.toDate()),
+                    address: row.address,
+                    "pic name": row.organization?.picName || "-",
+                    "pic email": row.organization?.picEmail || "-",
+                    "pic phone number": row.organization?.picPhoneNumber || "-",
                   }
                 : {
                     id: row.id,
@@ -270,9 +294,13 @@ export const MembersTableView = () => {
                     role: row.isAdmin ? "admin" : "member",
                     phone: row.phoneNumber,
                     address: row.address,
-                    "joining at": pretyDateTime(row.createdAt.toDate()),
-                  }
-            );
+                  };
+              return Object.assign(dt, {
+                "joining at": pretyDateTime(row.createdAt.toDate()),
+                "information channel": row.informationChannel,
+                "motivation to join": row.motivationToJoin,
+              });
+            });
 
           return (
             <TablePseudoExportButton
