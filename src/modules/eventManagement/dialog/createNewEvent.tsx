@@ -23,6 +23,7 @@ export const CreateNewEventDialog: React.FC<NewEventDialogProps> = ({
   onClose,
   onDone,
 }) => {
+  const todayAtMidnight = new Date().setHours(0, 0, 0, 0);
   const t = useMantineTheme();
   const borderStyle = {
     borderBottom: "1px solid",
@@ -44,16 +45,35 @@ export const CreateNewEventDialog: React.FC<NewEventDialogProps> = ({
         return val
           ? val.toDate() > today
             ? null
-            : "ScheduleDateTime must be in the future"
-          : "ScheduleDateTime is required";
+            : "Event date & time start must be in the future"
+          : "Event date & time start is required";
+      },
+      scheduleEndDateTime: (val) => {
+        const today = new Date(Date.now());
+        if (!val) {
+          return "Event date & time end is required";
+        }
+
+        if (val.toDate() <= today) {
+          return "Event date & time end must be in the future";
+        }
+
+        if (val.toDate() <= form.values.scheduleDateTime!.toDate()) {
+          return "Event date & time end must be after the start time";
+        }
       },
     },
   });
 
+  const handleClose = () => {
+    form.reset();
+    onClose();
+  };
+
   return (
     <Modal.Root
       opened={isOpen}
-      onClose={onClose}
+      onClose={handleClose}
       sx={{
         "& .mantine-Modal-inner": {
           padding: 0,
@@ -91,9 +111,9 @@ export const CreateNewEventDialog: React.FC<NewEventDialogProps> = ({
                 <DateTimePicker
                   clearable
                   withAsterisk
-                  label="Event date & time"
+                  label="Event date & time start"
                   placeholder="Pick the event date & time"
-                  minDate={new Date(Date.now())}
+                  minDate={new Date(todayAtMidnight)}
                   modalProps={{
                     withinPortal: true,
                   }}
@@ -102,6 +122,27 @@ export const CreateNewEventDialog: React.FC<NewEventDialogProps> = ({
                   onChange={(date) => {
                     form.setFieldValue(
                       "scheduleDateTime",
+                      date !== null
+                        ? Timestamp.fromDate(date as Date)
+                        : undefined
+                    );
+                  }}
+                />
+                <DateTimePicker
+                  clearable
+                  withAsterisk
+                  label="Event date & time end"
+                  placeholder="Pick the event date & time"
+                  disabled={!form.values.scheduleDateTime}
+                  minDate={new Date(todayAtMidnight)}
+                  modalProps={{
+                    withinPortal: true,
+                  }}
+                  error={form.errors["scheduleEndDateTime"]}
+                  date={form.values.scheduleEndDateTime?.toDate() || undefined}
+                  onChange={(date) => {
+                    form.setFieldValue(
+                      "scheduleEndDateTime",
                       date !== null
                         ? Timestamp.fromDate(date as Date)
                         : undefined
@@ -122,7 +163,7 @@ export const CreateNewEventDialog: React.FC<NewEventDialogProps> = ({
                 />
               </Stack>
               <Flex px={16} py={8} justify="end" gap={8}>
-                <Button onClick={onClose} radius={8} variant="subtle">
+                <Button onClick={handleClose} radius={8} variant="subtle">
                   Cancel
                 </Button>
                 <Button type="submit" radius={8}>

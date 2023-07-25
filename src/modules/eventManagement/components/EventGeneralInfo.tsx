@@ -136,8 +136,8 @@ const GeneralInfoViewer = ({ event }: { event?: ScheduledEvent }) => {
             <Typography sx={{ wordBreak: "break-all", ...kLineClamp(2) }}>
               {event
                 ? displayEventDate(
-                    event.scheduleDateTime.toDate(),
-                    event.scheduleEndDateTime.toDate()
+                    event.scheduleDateTime?.toDate(),
+                    event.scheduleEndDateTime?.toDate()
                   )
                 : "-"}
             </Typography>
