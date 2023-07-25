@@ -1,4 +1,4 @@
-import { useAuthStore } from "@/modules/auth/stores/authStore";
+import { UserType } from "@/types";
 import { FieldViewer } from "@/ui/Drawer/FieldViewer";
 import { IconChevronRight } from "@/ui/Icons";
 import { Typography } from "@/ui/Typography";
@@ -10,12 +10,32 @@ import {
   SimpleGrid,
   Stack,
 } from "@mantine/core";
-import { useOutletContext } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useOutletContext, useParams } from "react-router-dom";
+import { useMemberStore } from "../store/useSeetrumMembers";
 
 export const UserDetails = () => {
-  const { user } = useAuthStore();
+  const { tabId, userId } = useParams();
+  const [loading, setLoading] = useState<boolean>(false);
+  const { getMemberDetail, getMembers, isValid, updateMember, revalidate } =
+    useMemberStore();
+  useEffect(() => {
+    if (!isValid[(tabId || "individual") as UserType]) {
+      getMembers(tabId as UserType);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tabId, userId, isValid]);
 
+  const user = userId ? getMemberDetail(userId) : undefined;
   const isOrganization = user?.organization !== undefined;
+
+  const handleUpdateUser = async (isAdmin: boolean) => {
+    if (!user) return;
+    setLoading(true);
+    await updateMember(user.id, { isAdmin: isAdmin });
+    await revalidate((tabId || "individual") as UserType);
+    setLoading(false);
+  };
 
   return (
     <Drawer.Content>
@@ -100,6 +120,12 @@ export const UserDetails = () => {
                 sx={(t) => ({
                   borderColor: t.fn.rgba(t.colors.night[5], 0.12),
                 })}
+                loading={loading}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  user && handleUpdateUser(!user.isAdmin);
+                }}
               >
                 {user?.isAdmin
                   ? "Change to become member"
@@ -119,9 +145,8 @@ export const UserDetails = () => {
               value={user?.motivationToJoin || "-"}
             />
           </Stack>
-          <Divider />
         </Stack>
-        <DrawerFooter />
+        <DrawerFooter userType={(tabId || "individual") as UserType} />
       </Drawer.Body>
     </Drawer.Content>
   );
@@ -132,10 +157,12 @@ type OutletContext = [
   React.Dispatch<React.SetStateAction<number | undefined>>
 ];
 
-const DrawerFooter = () => {
+const DrawerFooter = ({ userType }: { userType: UserType }) => {
   const [activeIndex, setActiveIndex] = useOutletContext<OutletContext>();
-  // const navigate = useNavigate();
+  const { members, organization } = useMemberStore();
+  const navigate = useNavigate();
 
+  const users = userType === "individual" ? members : organization;
   return (
     <Flex
       px="1rem"
@@ -160,10 +187,8 @@ const DrawerFooter = () => {
         onClick={() => {
           setActiveIndex((s) => {
             const prevIndex = s ? (s - 1 < 0 ? 0 : s - 1) : 0;
-            // const prevUser =
-            //   applicants[trainingId] &&
-            //   applicants[trainingId][prevIndex];
-            // prevUser && navigate(`../${prevUser.id}`);
+            const prevUser = users && users[prevIndex];
+            prevUser && navigate(`../${prevUser.id}`);
             return prevIndex;
           });
         }}
@@ -173,26 +198,13 @@ const DrawerFooter = () => {
       <Button
         sx={{ borderRadius: 8 }}
         variant="subtle"
-        disabled={
-          // applicants && trainingId && applicants[trainingId]
-          // ? applicants[trainingId].length - 1 === activeIndex
-          // :
-          false
-        }
+        disabled={users ? users.length - 1 === activeIndex : false}
         onClick={() => {
           setActiveIndex((s) => {
-            const maxIndex =
-              // applicants && trainingId && applicants[trainingId]
-              // ? applicants[trainingId].length - 1
-              // :
-              1;
+            const maxIndex = users ? users.length - 1 : 1;
             const nextIndex = s ? (s + 1 > maxIndex ? maxIndex : s + 1) : 1;
-            // const nextApplicat =
-            // applicants &&
-            // trainingId &&
-            // applicants[trainingId] &&
-            // applicants[trainingId][nextIndex];
-            // nextApplicat && navigate(`../${nextApplicat.id}`);
+            const nextUser = users && users[nextIndex];
+            nextUser && navigate(`../${nextUser.id}`);
             return nextIndex;
           });
         }}

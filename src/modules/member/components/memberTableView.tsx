@@ -1,6 +1,5 @@
 import { kRowsPerPageOptions } from "@/lib/constants";
 import { mergeObjects, pretyDateTime } from "@/lib/utils";
-import { useApplicantStore } from "@/modules/trainings/store/useApplicantsStore";
 import { User } from "@/types";
 import { ExportMenu, TablePseudoExportButton } from "@/ui/Button/ExportMenu";
 import { IconEditSquare } from "@/ui/Icons";
@@ -20,6 +19,7 @@ import { IconSearch } from "@tabler/icons-react";
 import { MRT_ColumnDef, MantineReactTable } from "mantine-react-table";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Outlet, useNavigate, useParams } from "react-router-dom";
+import { useMemberStore } from "../store/useSeetrumMembers";
 
 export const MembersTableView = () => {
   const theme = useMantineTheme();
@@ -31,13 +31,14 @@ export const MembersTableView = () => {
   const { tabId, userId } = useParams();
   const isOrg = tabId?.includes("org") || false;
 
-  // const {} = useSeetrumMembers();
-  // TODO: Change to fetcher instead
-  const { applicants, getApplicants } = useApplicantStore();
-  const trainingId = "k8giuPa4pjeH1ZgjXOte";
+  const { members: users, organization, getMembers } = useMemberStore();
+
   useEffect(() => {
-    if (trainingId) getApplicants(trainingId);
-  }, [trainingId, getApplicants]);
+    getMembers(isOrg ? "organization" : "individual");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tabId, getMembers]);
+
+  const members = isOrg ? organization : users;
 
   const [activeIndex, setActiveIndex] = useState<number>();
 
@@ -185,15 +186,12 @@ export const MembersTableView = () => {
     [navigate]
   );
 
-  if (!trainingId || !applicants)
+  if (!members)
     return (
       <Stack h={100} w={"100%"} align="center" justify="center">
         <Loader />
       </Stack>
     );
-
-  // TODO: remove this
-  const members: User[] = applicants[trainingId] as any[];
 
   // Data calculations
   const fisrtItem = pagination.pageIndex * pagination.pageSize + 1;
