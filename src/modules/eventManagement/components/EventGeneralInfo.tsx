@@ -1,4 +1,4 @@
-import { pretyDateTime } from "@/lib/utils";
+import { displayEventDate, kLineClamp } from "@/lib/utils";
 import { updateScheduledEvent } from "@/modules/event/services/eventService";
 import { useEventDetail } from "@/modules/event/store/useEventDetail";
 import { useEventsList } from "@/modules/event/store/useEventList";
@@ -14,6 +14,7 @@ import {
   Skeleton,
   Stack,
   TextInput,
+  Tooltip,
   TypographyStylesProvider,
   useMantineTheme,
 } from "@mantine/core";
@@ -28,6 +29,7 @@ import { useParams } from "react-router-dom";
 
 export const ManageEventGeneralInfo = () => {
   const [editState, setMode] = useState<"edit" | "view">("view");
+  const [loading, setLoading] = useState<boolean>(false);
 
   const { id } = useParams();
   const { event, getEvent, eventId, revalidate } = useEventDetail();
@@ -79,7 +81,9 @@ export const ManageEventGeneralInfo = () => {
 
   const toggleState = async () => {
     if (editState === "edit") {
+      setLoading(true);
       await handleSavingEvent();
+      setLoading(false);
     }
     setMode(editState === "edit" ? "view" : "edit");
   };
@@ -100,6 +104,7 @@ export const ManageEventGeneralInfo = () => {
         <Button
           onClick={toggleState}
           radius={8}
+          loading={loading}
           variant={editState === "view" ? "subtle" : "filled"}
         >
           {editState === "edit" ? "Save changes" : "Edit"}
@@ -128,21 +133,32 @@ const GeneralInfoViewer = ({ event }: { event?: ScheduledEvent }) => {
         <Stack spacing={8} miw={150} sx={{ flex: 1 }}>
           <Typography textVariant="title-md">Date & Time</Typography>
           <Skeleton visible={event === undefined} w={event ? "100%" : "70%"}>
-            <Typography>
-              {event ? pretyDateTime(event.scheduleDateTime.toDate()) : "-"}
+            <Typography sx={{ wordBreak: "break-all", ...kLineClamp(2) }}>
+              {event
+                ? displayEventDate(
+                    event.scheduleDateTime.toDate(),
+                    event.scheduleEndDateTime.toDate()
+                  )
+                : "-"}
             </Typography>
           </Skeleton>
         </Stack>
         <Stack spacing={8} miw={150} sx={{ flex: 1 }}>
           <Typography textVariant="title-md">Venue</Typography>
-          <Skeleton visible={event === undefined} w={event ? "100%" : "70%"}>
-            <Typography>{event?.venue ?? "-"}</Typography>
-          </Skeleton>
+          <Tooltip withArrow label={event?.venue ?? "-"}>
+            <Skeleton visible={event === undefined} w={event ? "100%" : "70%"}>
+              <Typography sx={{ wordBreak: "break-all", ...kLineClamp(2) }}>
+                {event?.venue ?? "-"}
+              </Typography>
+            </Skeleton>
+          </Tooltip>
         </Stack>
         <Stack spacing={8} miw={150} sx={{ flex: 1 }}>
           <Typography textVariant="title-md">Organizer</Typography>
           <Skeleton visible={event === undefined} w={event ? "100%" : "70%"}>
-            <Typography>{event?.organizer ?? "-"}</Typography>
+            <Typography sx={{ wordBreak: "break-all", ...kLineClamp(2) }}>
+              {event?.organizer ?? "-"}
+            </Typography>
           </Skeleton>
         </Stack>
       </Flex>
@@ -178,10 +194,10 @@ const GeneralInfoEditor = ({
 }) => {
   const t = useMantineTheme();
 
-  const handleDueDateChange = (value: Date) => {
+  const handleDateChange = (field: keyof ScheduledEvent, value: Date) => {
     value.setSeconds(0);
     const timestamp = Timestamp.fromDate(value);
-    form.setFieldValue("scheduleDateTime", timestamp);
+    form.setFieldValue(field, timestamp);
   };
 
   return (
@@ -195,17 +211,28 @@ const GeneralInfoEditor = ({
         <Typography textVariant="title-md">Date & time</Typography>
         <Flex gap={16} align="center">
           <DateTimePicker
-            placeholder="Pick the event date & time"
+            placeholder="Pick the event start date & time"
             sx={{ flex: 1 }}
+            minDate={new Date(Date.now())}
             rightSection={<IconCalendar color={t.colors.gray[6]} />}
             value={form.values.scheduleDateTime?.toDate()}
-            onChange={handleDueDateChange}
+            onChange={(date: Date) => {
+              handleDateChange("scheduleDateTime", date);
+              const endEventDate = new Date(date.toISOString());
+              endEventDate.setSeconds(60 * 60);
+              handleDateChange("scheduleEndDateTime", endEventDate);
+            }}
           />
           <Typography>to</Typography>
           <DateTimePicker
-            placeholder="Pick the event date & time"
+            placeholder="Pick the event end date & time"
+            minDate={form.values.scheduleDateTime?.toDate()}
             sx={{ flex: 1 }}
             rightSection={<IconCalendar color={t.colors.gray[6]} />}
+            value={form.values.scheduleEndDateTime?.toDate()}
+            onChange={(date: Date) =>
+              handleDateChange("scheduleEndDateTime", date)
+            }
           />
         </Flex>
       </Stack>
