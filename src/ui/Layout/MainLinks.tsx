@@ -1,16 +1,17 @@
 import { NavLink, SegmentedControl, Stack, ThemeIcon } from "@mantine/core";
 
+import { useAuthStore } from "@/modules/auth/stores/authStore";
 import { notifications } from "@mantine/notifications";
 import React, { useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   IconAdminAward,
+  IconAdminPeople,
   IconAward,
   IconBriefcase,
   IconCalendar,
   IconHome,
 } from "../Icons";
-import { useAuthStore } from "@/modules/auth/stores/authStore";
 
 type NavLinkDataProps = {
   label: string;
@@ -130,6 +131,12 @@ const data: MainLinkProps[] = [
     // link: "/opportunity",
   },
   // Admin Links
+  {
+    icon: <IconAdminPeople size="20px" />,
+    label: "Manage members",
+    link: "/admin/members",
+    isAdmin: true,
+  },
   {
     icon: <IconCalendar size="20px" />,
     label: "Events",

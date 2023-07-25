@@ -3,34 +3,36 @@ import { ReactNode } from "react";
 import {
   BsArrowLeft,
   BsArrowRight,
+  BsAsterisk,
   BsAward,
+  BsBoxArrowRight,
+  BsBoxArrowUpRight,
   BsBriefcase,
+  BsBuilding,
+  BsCalendarEvent,
   BsCalendarWeek,
+  BsCardHeading,
+  BsChevronDown,
+  BsChevronRight,
+  BsClockHistory,
+  BsDownload,
+  BsExclamationCircle,
+  BsFiletypeJpg,
+  BsFiletypePdf,
+  BsGear,
   BsHouse,
   BsLightbulb,
+  BsPencilFill,
+  BsPencilSquare,
   BsPeople,
   BsPerson,
-  BsSearch,
-  BsX,
-  BsWhatsapp,
-  BsChevronRight,
-  BsChevronDown,
-  BsCalendarEvent,
-  BsClockHistory,
-  BsBoxArrowUpRight,
-  BsFiletypePdf,
-  BsFiletypeJpg,
-  BsUpload,
-  BsTrash,
-  BsExclamationCircle,
-  BsAsterisk,
-  BsBoxArrowRight,
-  BsGear,
-  BsDownload,
   BsPlus,
-  BsCardHeading,
-  BsPencilFill,
   BsSave2,
+  BsSearch,
+  BsTrash,
+  BsUpload,
+  BsWhatsapp,
+  BsX,
 } from "react-icons/bs";
 
 export const IconArrowLeft = BsArrowLeft;
@@ -41,6 +43,7 @@ export const IconBoxArrowUpRight = BsBoxArrowUpRight;
 export const IconBoxArrowRight = BsBoxArrowRight;
 
 export const IconPerson = BsPerson;
+export const IconBuliding = BsBuilding;
 export const IconPeople = BsPeople;
 
 export const IconX = BsX;
@@ -57,6 +60,7 @@ export const IconClockHistory = BsClockHistory;
 
 export const IconSearch = BsSearch;
 export const IconEdit = BsPencilFill;
+export const IconEditSquare = BsPencilSquare;
 
 export const IconWhatsapp = BsWhatsapp;
 
@@ -114,6 +118,13 @@ const AdminIconWrapper: React.FC<{ children: ReactNode }> = ({ children }) => {
 export const IconAdminAward = ({ size }: { size?: number | string }) => (
   <AdminIconWrapper>
     <IconAward
+      size={size ? (typeof size === "number" ? `${size}px` : size) : "20px"}
+    />
+  </AdminIconWrapper>
+);
+export const IconAdminPeople = ({ size }: { size?: number | string }) => (
+  <AdminIconWrapper>
+    <IconPeople
       size={size ? (typeof size === "number" ? `${size}px` : size) : "20px"}
     />
   </AdminIconWrapper>
