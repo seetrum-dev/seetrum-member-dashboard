@@ -11,9 +11,6 @@ import { MyEventListPage } from "./modules/event/pages/myEventListPage";
 import { ManageEventDetailsLayout } from "./modules/eventManagement/layout/ManageEventDetailsLayout";
 import { ManageEventDetail } from "./modules/eventManagement/pages/EventDetails";
 import { EventManagementList } from "./modules/eventManagement/pages/eventList";
-import { UserDetails } from "./modules/member/components/detailDrawer";
-import { MembersTableView } from "./modules/member/components/memberTableView";
-import { MemberListPage } from "./modules/member/pages/memberList";
 import { PlaygroundPage } from "./modules/playground/PlaygroundPage";
 import { TrainingApplicationPage } from "./modules/trainings/pages/TrainingApplicationPage";
 import { TrainingDetailPage } from "./modules/trainings/pages/TrainingDetailPage";
@@ -22,6 +19,9 @@ import { ManageTrainingDetail } from "./modules/trainings/pages/manageTrainings/
 import { ManageDetailTrainingLayout } from "./modules/trainings/pages/manageTrainings/ManageTrainingDetailLayout";
 import { ManageTrainingsPage } from "./modules/trainings/pages/manageTrainings/ManageTrainings";
 import { ApplicantDetails } from "./modules/trainings/pages/manageTrainings/applicantDetailDrawer";
+import { UserDetails } from "./modules/user/components/detailDrawer";
+import { MembersTableView } from "./modules/user/components/memberTableView";
+import { MemberListPage } from "./modules/user/pages/memberList";
 import { MainLayout } from "./ui/Layout";
 import {
   FormFillingLayout,
