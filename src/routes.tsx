@@ -11,6 +11,7 @@ import { MyEventListPage } from "./modules/event/pages/myEventListPage";
 import { ManageEventDetailsLayout } from "./modules/eventManagement/layout/ManageEventDetailsLayout";
 import { ManageEventDetail } from "./modules/eventManagement/pages/EventDetails";
 import { EventManagementList } from "./modules/eventManagement/pages/eventList";
+import { UserDetails } from "./modules/member/components/detailDrawer";
 import { MembersTableView } from "./modules/member/components/memberTableView";
 import { MemberListPage } from "./modules/member/pages/memberList";
 import { PlaygroundPage } from "./modules/playground/PlaygroundPage";
@@ -174,12 +175,12 @@ const ROUTES = {
               {
                 path: ":tabId?",
                 element: <MembersTableView />,
-                /* children: [
+                children: [
                   {
-                    path: ":applicantId",
-                    element: <ApplicantDetails />,
+                    path: ":userId",
+                    element: <UserDetails />,
                   },
-                ], */
+                ],
               },
             ],
           },

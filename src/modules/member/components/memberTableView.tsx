@@ -7,6 +7,7 @@ import { IconEditSquare } from "@/ui/Icons";
 import { Typography } from "@/ui/Typography";
 import {
   Button,
+  Drawer,
   Flex,
   Input,
   Loader,
@@ -18,7 +19,7 @@ import { useMediaQuery } from "@mantine/hooks";
 import { IconSearch } from "@tabler/icons-react";
 import { MRT_ColumnDef, MantineReactTable } from "mantine-react-table";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Outlet, useNavigate, useParams } from "react-router-dom";
 
 export const MembersTableView = () => {
   const theme = useMantineTheme();
@@ -27,7 +28,7 @@ export const MembersTableView = () => {
   );
   const navigate = useNavigate();
 
-  const { tabId } = useParams();
+  const { tabId, userId } = useParams();
   const isOrg = tabId?.includes("org") || false;
 
   // const {} = useSeetrumMembers();
@@ -193,7 +194,6 @@ export const MembersTableView = () => {
 
   // TODO: remove this
   const members: User[] = applicants[trainingId] as any[];
-  console.log(members, activeIndex);
 
   // Data calculations
   const fisrtItem = pagination.pageIndex * pagination.pageSize + 1;
@@ -293,8 +293,8 @@ export const MembersTableView = () => {
           );
         }}
       />
-      {/* <Drawer.Root
-        opened={Boolean(memberId)}
+      <Drawer.Root
+        opened={Boolean(userId)}
         onClose={() => navigate(".")}
         position="right"
         size={640}
@@ -308,7 +308,7 @@ export const MembersTableView = () => {
           })}
         />
         <Outlet context={[activeIndex, setActiveIndex]} />
-      </Drawer.Root> */}
+      </Drawer.Root>
     </Stack>
   );
 };

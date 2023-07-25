@@ -4,6 +4,7 @@ import { useApplicantStore } from "@/modules/trainings/store/useApplicantsStore"
 import { uploadFile } from "@/services/firebase/storage";
 import { TrainingMemberStatus } from "@/types/models/trainingMember";
 import { FileScreeningCard } from "@/ui/Card/FileScreeningCard";
+import { FieldViewer as FieldView } from "@/ui/Drawer/FieldViewer";
 import { IconPlus } from "@/ui/Icons";
 import { Typography } from "@/ui/Typography";
 import {
@@ -259,26 +260,6 @@ export const ApplicantDetails = () => {
         <DrawerFooter />
       </Drawer.Body>
     </Drawer.Content>
-  );
-};
-
-const FieldView = ({
-  label,
-  value,
-}: {
-  label: string;
-  value?: string | Number;
-}) => {
-  return (
-    <Stack spacing={4}>
-      <Typography
-        textVariant="label-lg"
-        sx={(t) => ({ color: t.fn.rgba(t.colors.night[5], 0.6) })}
-      >
-        {label}
-      </Typography>
-      <Typography textVariant="body-lg">{value?.toString()}</Typography>
-    </Stack>
   );
 };
 
