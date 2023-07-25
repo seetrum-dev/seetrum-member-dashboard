@@ -134,7 +134,7 @@ const data: MainLinkProps[] = [
   {
     icon: <IconAdminPeople size="20px" />,
     label: "Manage members",
-    link: "/admin/members",
+    link: "/admin/members/individual",
     isAdmin: true,
   },
   {
