@@ -133,7 +133,7 @@ const data: MainLinkProps[] = [
   {
     icon: <IconCalendar size="20px" />,
     label: "Events",
-    // link: "/admin/events",
+    link: "/admin/events",
     isAdmin: true,
   },
   {

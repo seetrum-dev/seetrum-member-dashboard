@@ -7,6 +7,7 @@ export type ScheduledEvent = BaseModel & ScheduledEventModel;
 export type ScheduledEventModel = {
   title: string;
   scheduleDateTime: Timestamp;
+  scheduleEndDateTime: Timestamp;
   venue: string;
   organizer: string;
   description: string;
@@ -20,6 +21,7 @@ export const getDummyEvent = () => {
   const de: ScheduledEventModel = {
     title: "dummy event " + date,
     scheduleDateTime: Timestamp.fromDate(new Date()),
+    scheduleEndDateTime: Timestamp.fromDate(new Date()),
     venue: "https://zoom.com",
     organizer: "Seetrum",
     description: "<h1>description</h1>",
