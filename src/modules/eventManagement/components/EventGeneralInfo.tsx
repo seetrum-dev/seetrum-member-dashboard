@@ -32,16 +32,16 @@ export const ManageEventGeneralInfo = () => {
   const [loading, setLoading] = useState<boolean>(false);
 
   const { id } = useParams();
-  const { event, getEvent, eventId, revalidate } = useEventDetail();
-  const { setValidStatus } = useEventsList();
+  const eventId = useEventDetail((s) => s.eventId);
+  const event = useEventDetail((s) => s.event);
+  const getEvent = useEventDetail((s) => s.getEvent);
+  const revalidate = useEventDetail((s) => s.revalidate);
+  const setValidStatus = useEventsList((s) => s.setValidStatus);
 
-  const initialValues = { ...event };
-  delete initialValues.id;
-  delete initialValues.createdAt;
-  delete initialValues.updatedAt;
-  delete initialValues.thumbnailFileName;
+  const { createdAt, updatedAt, thumbnailFileName, ...initialValues } =
+    event || {};
 
-  const form = useForm({
+  const form = useForm<Partial<ScheduledEvent>>({
     initialValues,
     validate: {
       title: isNotEmpty("Title can not be empty"),
@@ -65,9 +65,13 @@ export const ManageEventGeneralInfo = () => {
   }, [id]);
 
   useEffect(() => {
-    if (event && !form.isDirty()) form.setValues(event);
+    if (eventId !== id) form.reset();
+    if (event && (!form.isDirty() || event.id !== form.values.id)) {
+      const { createdAt, updatedAt, thumbnailFileName, ...eventData } = event;
+      form.setValues(eventData);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [event]);
+  }, [id, event]);
 
   const handleSavingEvent = async () => {
     event &&
@@ -79,11 +83,19 @@ export const ManageEventGeneralInfo = () => {
     setValidStatus(false);
   };
 
+  const handleResetForm = () => {
+    form.reset();
+    const { createdAt, updatedAt, thumbnailFileName, ...eventData } =
+      event || {};
+    form.setValues(eventData);
+  };
+
   const toggleState = async () => {
     if (editState === "edit") {
       setLoading(true);
       await handleSavingEvent();
       setLoading(false);
+      handleResetForm();
     }
     setMode(editState === "edit" ? "view" : "edit");
   };
@@ -101,14 +113,28 @@ export const ManageEventGeneralInfo = () => {
     >
       <Flex justify="space-between" gap={16}>
         <Typography textVariant="title-lg">General Information</Typography>
-        <Button
-          onClick={toggleState}
-          radius={8}
-          loading={loading}
-          variant={editState === "view" ? "subtle" : "filled"}
-        >
-          {editState === "edit" ? "Save changes" : "Edit"}
-        </Button>
+        <Flex gap={8}>
+          {editState === "edit" && (
+            <Button
+              onClick={() => {
+                setMode("view");
+                handleResetForm();
+              }}
+              radius={8}
+              variant={"subtle"}
+            >
+              Discard
+            </Button>
+          )}
+          <Button
+            onClick={toggleState}
+            radius={8}
+            loading={loading}
+            variant={editState === "view" ? "subtle" : "filled"}
+          >
+            {editState === "edit" ? "Save changes" : "Edit"}
+          </Button>
+        </Flex>
       </Flex>
       {editState === "edit" ? (
         <GeneralInfoEditor form={form} editor={editor} />

@@ -95,7 +95,7 @@ export const ManageEventParticipants = () => {
     []
   );
 
-  if (!participants || !eventId)
+  if (!participants || !eventId || !participants[eventId])
     return (
       <Stack h={100} w={"100%"} align="center" justify="center">
         <Loader />
