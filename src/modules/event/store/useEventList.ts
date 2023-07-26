@@ -1,21 +1,17 @@
 import {
+  CreateScheduledEventModel,
   ScheduledEvent,
-  ScheduledEventModel,
 } from "@/types/models/scheduledEvent";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-import {
-  createEventMaster,
-  getAllScheduledEvents,
-} from "../services/eventService";
-import { kDefaultThumbnailFilename } from "@/lib/constants";
+import { createEvent, getAllScheduledEvents } from "../services/eventService";
 
 interface EventListStore {
   events?: ScheduledEvent[];
   getEvents: () => Promise<ScheduledEvent[]>;
 
   sortEvents: (orderBy: keyof ScheduledEvent, sortBy: "asc" | "desc") => void;
-  createEvent: (event: Partial<ScheduledEventModel>) => Promise<void>;
+  createEvent: (event: CreateScheduledEventModel) => Promise<ScheduledEvent>;
   isValid: boolean;
   loading: boolean;
   setValidStatus: (val: boolean) => void;
@@ -46,13 +42,12 @@ export const useEventsList = create(
       return set({ events: sortData(eventsList, orderBy, sortBy) });
     },
     async createEvent(event) {
-      const newEvent = await createEventMaster({
+      const newEvent = await createEvent({
         title: event.title!,
         organizer: event.organizer!,
         venue: event.venue!,
         scheduleDateTime: event.scheduleDateTime!,
-        description: "",
-        thumbnailFileName: kDefaultThumbnailFilename,
+        scheduleEndDateTime: event.scheduleEndDateTime!,
       });
       set((s) => {
         if (s.events)
@@ -63,6 +58,7 @@ export const useEventsList = create(
           };
         else return s;
       });
+      return newEvent;
     },
     setValidStatus(val) {
       set({ isValid: val });

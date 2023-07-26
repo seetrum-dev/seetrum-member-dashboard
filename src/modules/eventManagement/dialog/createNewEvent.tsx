@@ -1,5 +1,9 @@
-import { ScheduledEventModel } from "@/types/models/scheduledEvent";
+import {
+  CreateScheduledEventModel,
+  ScheduledEventModel,
+} from "@/types/models/scheduledEvent";
 import { Typography } from "@/ui/Typography";
+import { showErrorNotif } from "@/ui/notifications";
 import {
   Button,
   Flex,
@@ -16,14 +20,13 @@ import { Timestamp } from "firebase/firestore";
 interface NewEventDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onDone: (event: Partial<ScheduledEventModel>) => void;
+  onDone: (event: CreateScheduledEventModel) => void;
 }
 export const CreateNewEventDialog: React.FC<NewEventDialogProps> = ({
   isOpen,
   onClose,
   onDone,
 }) => {
-  const todayAtMidnight = new Date().setHours(0, 0, 0, 0);
   const t = useMantineTheme();
   const borderStyle = {
     borderBottom: "1px solid",
@@ -41,21 +44,11 @@ export const CreateNewEventDialog: React.FC<NewEventDialogProps> = ({
       venue: (val) => (Boolean(val) ? null : "Venue is required"),
       organizer: (val) => (Boolean(val) ? null : "Organizer is required"),
       scheduleDateTime: (val) => {
-        const today = new Date(Date.now());
-        return val
-          ? val.toDate() > today
-            ? null
-            : "Event date & time start must be in the future"
-          : "Event date & time start is required";
+        return val ? null : "Event date & time start is required";
       },
       scheduleEndDateTime: (val) => {
-        const today = new Date(Date.now());
         if (!val) {
           return "Event date & time end is required";
-        }
-
-        if (val.toDate() <= today) {
-          return "Event date & time end must be in the future";
         }
 
         if (val.toDate() <= form.values.scheduleDateTime!.toDate()) {
@@ -69,6 +62,22 @@ export const CreateNewEventDialog: React.FC<NewEventDialogProps> = ({
     form.reset();
     onClose();
   };
+
+  const handleSubmit = form.onSubmit(async (values) => {
+    try {
+      const event: CreateScheduledEventModel = {
+        title: values.title!,
+        organizer: values.organizer!,
+        venue: values.venue!,
+        scheduleDateTime: values.scheduleDateTime!,
+        scheduleEndDateTime: values.scheduleEndDateTime!,
+      };
+      onDone(event);
+    } catch (e) {
+      showErrorNotif();
+    }
+    handleClose();
+  });
 
   return (
     <Modal.Root
@@ -93,13 +102,7 @@ export const CreateNewEventDialog: React.FC<NewEventDialogProps> = ({
           <Typography textVariant="title-lg">Create a New Event</Typography>
         </Modal.Header>
         <Modal.Body p={0}>
-          <form
-            onSubmit={form.onSubmit(async (values) => {
-              onDone({ ...values });
-              form.reset();
-              onClose();
-            })}
-          >
+          <form onSubmit={handleSubmit}>
             <Stack spacing={0}>
               <Stack p={16} pb={40} spacing={16} sx={{ ...borderStyle }}>
                 <TextInput
@@ -113,9 +116,11 @@ export const CreateNewEventDialog: React.FC<NewEventDialogProps> = ({
                   withAsterisk
                   label="Event date & time start"
                   placeholder="Pick the event date & time"
-                  minDate={new Date(todayAtMidnight)}
                   modalProps={{
                     withinPortal: true,
+                  }}
+                  popoverProps={{
+                    zIndex: 1000,
                   }}
                   error={form.errors["scheduleDateTime"]}
                   date={form.values.scheduleDateTime?.toDate() || undefined}
@@ -134,9 +139,11 @@ export const CreateNewEventDialog: React.FC<NewEventDialogProps> = ({
                   label="Event date & time end"
                   placeholder="Pick the event date & time"
                   disabled={!form.values.scheduleDateTime}
-                  minDate={new Date(todayAtMidnight)}
                   modalProps={{
                     withinPortal: true,
+                  }}
+                  popoverProps={{
+                    zIndex: 1000,
                   }}
                   error={form.errors["scheduleEndDateTime"]}
                   date={form.values.scheduleEndDateTime?.toDate() || undefined}

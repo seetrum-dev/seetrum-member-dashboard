@@ -5,14 +5,17 @@ import { kDefaultThumbnailFilename } from "@/lib/constants";
 export type ScheduledEvent = BaseModel & ScheduledEventModel;
 
 export type ScheduledEventModel = {
+  description: string;
+  thumbnailFileName: string;
+  whatsappLink?: string;
+} & CreateScheduledEventModel;
+
+export type CreateScheduledEventModel = {
   title: string;
   scheduleDateTime: Timestamp;
   scheduleEndDateTime: Timestamp;
   venue: string;
   organizer: string;
-  description: string;
-  thumbnailFileName: string;
-  whatsappLink?: string;
 };
 
 export const getDummyEvent = () => {

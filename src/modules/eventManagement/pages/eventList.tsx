@@ -1,4 +1,5 @@
 import { ProtectedPage } from "@/modules/auth/components/ProtectedPage";
+import { EmptyData } from "@/modules/event/components/emptyData";
 import { EventCard } from "@/modules/event/components/eventCard";
 import { SearchBar } from "@/modules/event/components/searchbar";
 import { SortMenu } from "@/modules/event/components/sortMenu";
@@ -16,20 +17,22 @@ import { DatePickerInput } from "@mantine/dates";
 import { useMediaQuery } from "@mantine/hooks";
 import { useEffect, useState } from "react";
 import { CreateNewEventDialog } from "../dialog/createNewEvent";
-import { EmptyData } from "@/modules/event/components/emptyData";
+import { useNavigate } from "react-router-dom";
 
 export const EventManagementList = () => {
   const t = useMantineTheme();
   const smallerThanSM = useMediaQuery(`(max-width: ${t.breakpoints.sm}`);
   const [createEvent, setCreateEvent] = useState<boolean>(false);
   const [search, setSearch] = useState<string>();
-  const {
-    events,
-    getEvents,
-    sortEvents,
-    createEvent: createEventFn,
-    loading,
-  } = useEventsList();
+  const navigate = useNavigate();
+  const { events, getEvents, sortEvents, loading, createEventFn } =
+    useEventsList((s) => ({
+      events: s.events,
+      getEvents: s.getEvents,
+      sortEvents: s.sortEvents,
+      loading: s.loading,
+      createEventFn: s.createEvent,
+    }));
   const [dateFilter, setDateFilter] = useState<Date>();
   useEffect(() => {
     getEvents();
@@ -125,8 +128,9 @@ export const EventManagementList = () => {
           onClose={() => setCreateEvent(false)}
           onDone={async (event) => {
             console.log(1349, event);
-            await createEventFn(event);
-            await getEvents();
+            const newEvent = await createEventFn(event);
+            // got to the new event detail page
+            navigate(`${newEvent.id}`);
           }}
         />
       </Stack>
