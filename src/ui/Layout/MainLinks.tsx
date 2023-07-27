@@ -1,16 +1,18 @@
 import { NavLink, SegmentedControl, Stack, ThemeIcon } from "@mantine/core";
 
+import { useAuthStore } from "@/modules/auth/stores/authStore";
 import { notifications } from "@mantine/notifications";
 import React, { useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   IconAdminAward,
+  IconAdminCalendar,
+  IconAdminPeople,
   IconAward,
   IconBriefcase,
   IconCalendar,
   IconHome,
 } from "../Icons";
-import { useAuthStore } from "@/modules/auth/stores/authStore";
 
 type NavLinkDataProps = {
   label: string;
@@ -68,7 +70,7 @@ const MainLink: React.FC<MainLinkProps> = ({
     <NavLink
       key={label}
       label={label}
-      defaultOpened={isChildActive && hasLinks}
+      defaultOpened={(isChildActive && hasLinks) || false}
       active={isActive}
       icon={
         <ThemeIcon color="biceblue.5" variant="outline" sx={{ border: "none" }}>
@@ -77,27 +79,29 @@ const MainLink: React.FC<MainLinkProps> = ({
       }
       onClick={(e) => !links && handleNavigate(e, link)}
     >
-      {hasLinks &&
-        links.map((submenu, idx) => {
-          const active = Boolean(
-            submenu.link &&
-              location.pathname.split("/")[1] === submenu.link.replace("/", "")
-          );
-          return (
-            <NavLink
-              key={idx}
-              {...submenu}
-              active={active}
-              onClick={(e) => handleNavigate(e, submenu.link)}
-              sx={(theme) => ({
-                borderLeft: "1px solid",
-                borderColor: theme.colors.gray[4],
-                marginInlineStart: 4,
-                paddingInlineStart: 26,
-              })}
-            />
-          );
-        })}
+      {hasLinks
+        ? links.map((submenu, idx) => {
+            const active = Boolean(
+              submenu.link &&
+                location.pathname.split("/")[1] ===
+                  submenu.link.replace("/", "")
+            );
+            return (
+              <NavLink
+                key={idx}
+                {...submenu}
+                active={active}
+                onClick={(e) => handleNavigate(e, submenu.link)}
+                sx={(theme) => ({
+                  borderLeft: "1px solid",
+                  borderColor: theme.colors.gray[4],
+                  marginInlineStart: 4,
+                  paddingInlineStart: 26,
+                })}
+              />
+            );
+          })
+        : undefined}
     </NavLink>
   );
 };
@@ -131,8 +135,14 @@ const data: MainLinkProps[] = [
   },
   // Admin Links
   {
-    icon: <IconCalendar size="20px" />,
-    label: "Events",
+    icon: <IconAdminPeople size="20px" />,
+    label: "Manage members",
+    link: "/admin/members/individual",
+    isAdmin: true,
+  },
+  {
+    icon: <IconAdminCalendar size="20px" />,
+    label: "Manage events",
     link: "/admin/events",
     isAdmin: true,
   },
@@ -163,13 +173,15 @@ export const MainLinks: React.FC<{ onNavigate: (path: string) => void }> = ({
     const toAdmin = Boolean(mode === "admin");
     if (adminMode && toAdmin) return;
 
-    const navigateTo = toAdmin
+    var navigateTo = toAdmin
       ? "/admin" + pathname
       : pathname
           .split("/admin")
           .join("")
           .split(tabId ? `/${tabId}` : "")
           .join("");
+    if (pathname.includes("/members/") && !toAdmin) navigateTo = "/";
+
     setMode(toAdmin);
     navigate(navigateTo);
   };
