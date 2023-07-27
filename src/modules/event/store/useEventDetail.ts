@@ -7,6 +7,7 @@ interface EventDetailStore {
   eventId?: string;
   event?: ScheduledEvent;
   getEvent: (id: string) => Promise<ScheduledEvent | undefined>;
+  revalidate: () => Promise<void>;
   isValid: boolean;
   loading: boolean;
 }
@@ -24,8 +25,23 @@ export const useEventDetail = create(
         return event;
       }
       const updatedEvent = await getScheduledEventById(id);
-      set({ event: updatedEvent, loading: false, isValid: true });
+      set({
+        eventId: updatedEvent.id,
+        event: updatedEvent,
+        loading: false,
+        isValid: true,
+      });
       return updatedEvent;
+    },
+    async revalidate() {
+      if (!get().eventId) return;
+      const updatedEvent = await getScheduledEventById(get().eventId!);
+      set({
+        eventId: updatedEvent.id,
+        event: updatedEvent,
+        loading: false,
+        isValid: true,
+      });
     },
   }))
 );

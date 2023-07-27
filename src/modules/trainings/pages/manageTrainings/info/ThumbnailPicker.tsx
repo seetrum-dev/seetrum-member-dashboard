@@ -149,7 +149,10 @@ interface ModalProps {
   opened: boolean;
   onClose(): void;
 }
-const ConfirmationModal: React.FC<ModalProps> = ({ opened, onClose }) => {
+export const ConfirmationModal: React.FC<ModalProps> = ({
+  opened,
+  onClose,
+}) => {
   return (
     <Modal
       withCloseButton={false}

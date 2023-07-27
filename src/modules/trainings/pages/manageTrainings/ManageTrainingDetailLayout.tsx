@@ -1,11 +1,5 @@
-import { Divider, Flex, Skeleton, Stack, ThemeIcon } from "@mantine/core";
-import { Timestamp } from "firebase/firestore";
-import { Outlet, useParams } from "react-router-dom";
-import { useTrainings } from "../../store/useTrainings";
-import { useEffect, useState } from "react";
-import { Training } from "@/types/models/training";
-import { Typography } from "@/ui/Typography";
 import { pretyDateTime } from "@/lib/utils";
+import { Training } from "@/types/models/training";
 import {
   IconCardHeading,
   IconClockHistory,
@@ -13,6 +7,12 @@ import {
   IconPeople,
 } from "@/ui/Icons";
 import { TabBar, TabbarData } from "@/ui/Tabbar/tabBar";
+import { Typography } from "@/ui/Typography";
+import { Flex, Skeleton, Stack, ThemeIcon } from "@mantine/core";
+import { Timestamp } from "firebase/firestore";
+import { useEffect, useState } from "react";
+import { Outlet, useParams } from "react-router-dom";
+import { useTrainings } from "../../store/useTrainings";
 
 export const ManageDetailTrainingLayout = () => {
   const { id } = useParams();
@@ -67,7 +67,6 @@ const Header: React.FC<HeaderProps> = ({ updatedAt, title }) => {
         <Skeleton h={47} w="60%" />
         <Skeleton h={26} w="25%" />
         <TabBar data={manageTrainingTabbarData} />
-        <Divider />
       </Stack>
     );
   }
@@ -82,18 +81,20 @@ const Header: React.FC<HeaderProps> = ({ updatedAt, title }) => {
         position: "sticky",
         top: -32,
       })}
+      spacing={0}
     >
-      <Typography textVariant="headline-lg">{title}</Typography>
-      <Flex align={"center"} gap={4}>
-        <ThemeIcon variant="outline" sx={{ border: "none" }}>
-          <IconClockHistory />
-        </ThemeIcon>
-        <Typography textVariant="body-lg" color="dimmed">
-          Last modified on {pretyDateTime(updatedAt.toDate())}
-        </Typography>
-      </Flex>
+      <Stack>
+        <Typography textVariant="headline-lg">{title}</Typography>
+        <Flex align={"center"} gap={4}>
+          <ThemeIcon variant="outline" sx={{ border: "none" }}>
+            <IconClockHistory />
+          </ThemeIcon>
+          <Typography textVariant="body-lg" color="dimmed">
+            Last modified on {pretyDateTime(updatedAt.toDate())}
+          </Typography>
+        </Flex>
+      </Stack>
       <TabBar data={manageTrainingTabbarData} />
-      <Divider />
     </Stack>
   );
 };

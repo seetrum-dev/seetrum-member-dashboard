@@ -17,6 +17,15 @@ export const extractInitials = (name: string) => {
   return initials.toUpperCase();
 };
 
+export const pretyTime = (date: Date) => {
+  const d = new Date(date);
+  return d.toLocaleTimeString("en-US", {
+    hour12: false,
+    minute: "2-digit",
+    hour: "numeric",
+  });
+};
+
 export const pretyDate = (date: Date) => {
   const d = new Date(date);
   return d.toLocaleString("en-US", {
@@ -36,6 +45,18 @@ export const pretyDateTime = (date: Date) => {
     minute: "2-digit",
     hour12: false,
   });
+};
+
+export const displayEventDate = (startDate: Date, endDate?: Date) => {
+  if (!endDate) return pretyDateTime(startDate);
+
+  const startDateStr = pretyDate(startDate);
+  const endDateStr = pretyDate(endDate);
+  if (startDateStr === endDateStr)
+    return `${startDateStr} ${pretyTime(startDate)} - ${pretyTime(endDate)}`;
+  return `${startDateStr} ${pretyTime(startDate)} - ${pretyTime(
+    endDate
+  )} ${endDateStr}`;
 };
 
 export const yyyymmddDateFormater = (date: Date) => {

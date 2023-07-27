@@ -1,15 +1,20 @@
-import { ScheduledEvent } from "@/types/models/scheduledEvent";
+import {
+  CreateScheduledEventModel,
+  ScheduledEvent,
+} from "@/types/models/scheduledEvent";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-import { getAllScheduledEvents } from "../services/eventService";
+import { createEvent, getAllScheduledEvents } from "../services/eventService";
 
 interface EventListStore {
   events?: ScheduledEvent[];
   getEvents: () => Promise<ScheduledEvent[]>;
 
   sortEvents: (orderBy: keyof ScheduledEvent, sortBy: "asc" | "desc") => void;
+  createEvent: (event: CreateScheduledEventModel) => Promise<ScheduledEvent>;
   isValid: boolean;
   loading: boolean;
+  setValidStatus: (val: boolean) => void;
 }
 
 export const useEventsList = create(
@@ -35,6 +40,28 @@ export const useEventsList = create(
       }
 
       return set({ events: sortData(eventsList, orderBy, sortBy) });
+    },
+    async createEvent(event) {
+      const newEvent = await createEvent({
+        title: event.title!,
+        organizer: event.organizer!,
+        venue: event.venue!,
+        scheduleDateTime: event.scheduleDateTime!,
+        scheduleEndDateTime: event.scheduleEndDateTime!,
+      });
+      set((s) => {
+        if (s.events)
+          return {
+            events: [...s.events, newEvent],
+            isValid: false,
+            loading: false,
+          };
+        else return s;
+      });
+      return newEvent;
+    },
+    setValidStatus(val) {
+      set({ isValid: val });
     },
   }))
 );

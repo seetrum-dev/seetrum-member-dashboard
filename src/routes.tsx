@@ -5,7 +5,12 @@ import { RegisterOptionAltPage } from "./modules/auth/pages/RegisterOptionAltPag
 import { RegisterOptionPage } from "./modules/auth/pages/RegisterOptionPage";
 import { RegisterPage } from "./modules/auth/pages/RegisterPage";
 import { DashboardPage } from "./modules/dashboard/pages/DashboardPage";
+import { EventDetailPage } from "./modules/event/pages/eventDetailPage";
 import { EventListPages } from "./modules/event/pages/eventListPages";
+import { MyEventListPage } from "./modules/event/pages/myEventListPage";
+import { ManageEventDetailsLayout } from "./modules/eventManagement/layout/ManageEventDetailsLayout";
+import { ManageEventDetail } from "./modules/eventManagement/pages/EventDetails";
+import { EventManagementList } from "./modules/eventManagement/pages/eventList";
 import { PlaygroundPage } from "./modules/playground/PlaygroundPage";
 import { TrainingApplicationPage } from "./modules/trainings/pages/TrainingApplicationPage";
 import { TrainingDetailPage } from "./modules/trainings/pages/TrainingDetailPage";
@@ -14,13 +19,14 @@ import { ManageTrainingDetail } from "./modules/trainings/pages/manageTrainings/
 import { ManageDetailTrainingLayout } from "./modules/trainings/pages/manageTrainings/ManageTrainingDetailLayout";
 import { ManageTrainingsPage } from "./modules/trainings/pages/manageTrainings/ManageTrainings";
 import { ApplicantDetails } from "./modules/trainings/pages/manageTrainings/applicantDetailDrawer";
+import { UserDetails } from "./modules/user/components/detailDrawer";
+import { MembersTableView } from "./modules/user/components/memberTableView";
+import { MemberListPage } from "./modules/user/pages/memberList";
 import { MainLayout } from "./ui/Layout";
 import {
   FormFillingLayout,
   applicationTrainingSupportDataLoader,
 } from "./ui/Layout/FormFillingLayout";
-import { EventDetailPage } from "./modules/event/pages/eventDetailPage";
-import { MyEventListPage } from "./modules/event/pages/myEventListPage";
 
 const Redirector = ({ path }: { path: string }) => {
   const navigate = useNavigate();
@@ -113,6 +119,31 @@ const ROUTES = {
         path: "admin/*",
         children: [
           {
+            path: "events",
+            children: [
+              {
+                index: true,
+                element: <EventManagementList />,
+              },
+              {
+                path: ":id",
+                element: <ManageEventDetailsLayout />,
+                children: [
+                  {
+                    path: ":tabId?",
+                    element: <ManageEventDetail />,
+                    children: [
+                      // {
+                      //   path: ":memberId",
+                      //   element: <EventParticipantsDetails />,
+                      // },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+          {
             path: "trainings",
             children: [
               {
@@ -132,6 +163,22 @@ const ROUTES = {
                         element: <ApplicantDetails />,
                       },
                     ],
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            path: "members",
+            element: <MemberListPage />,
+            children: [
+              {
+                path: ":tabId?",
+                element: <MembersTableView />,
+                children: [
+                  {
+                    path: ":userId",
+                    element: <UserDetails />,
                   },
                 ],
               },

@@ -5,13 +5,17 @@ import { kDefaultThumbnailFilename } from "@/lib/constants";
 export type ScheduledEvent = BaseModel & ScheduledEventModel;
 
 export type ScheduledEventModel = {
-  title: string;
-  scheduleDateTime: Timestamp;
-  venue: string;
-  organizer: string;
   description: string;
   thumbnailFileName: string;
   whatsappLink?: string;
+} & CreateScheduledEventModel;
+
+export type CreateScheduledEventModel = {
+  title: string;
+  scheduleDateTime: Timestamp;
+  scheduleEndDateTime: Timestamp;
+  venue: string;
+  organizer: string;
 };
 
 export const getDummyEvent = () => {
@@ -20,6 +24,7 @@ export const getDummyEvent = () => {
   const de: ScheduledEventModel = {
     title: "dummy event " + date,
     scheduleDateTime: Timestamp.fromDate(new Date()),
+    scheduleEndDateTime: Timestamp.fromDate(new Date()),
     venue: "https://zoom.com",
     organizer: "Seetrum",
     description: "<h1>description</h1>",

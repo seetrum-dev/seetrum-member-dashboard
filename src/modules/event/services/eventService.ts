@@ -1,4 +1,4 @@
-import { COLLECTION_EVENT } from "@/lib/constants";
+import { COLLECTION_EVENT, kDefaultThumbnailFilename } from "@/lib/constants";
 import {
   addNewDocument,
   getAllDocuments,
@@ -6,9 +6,20 @@ import {
   updateDocument,
 } from "@/services/firebase/helper";
 import {
+  CreateScheduledEventModel,
   ScheduledEvent,
   ScheduledEventModel,
 } from "@/types/models/scheduledEvent";
+
+export const createEvent = async (
+  payload: CreateScheduledEventModel
+): Promise<ScheduledEvent> => {
+  return createEventMaster({
+    ...payload,
+    description: "",
+    thumbnailFileName: kDefaultThumbnailFilename,
+  });
+};
 
 export const createEventMaster = async (
   payload: ScheduledEventModel
