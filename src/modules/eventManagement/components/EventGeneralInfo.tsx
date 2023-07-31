@@ -67,8 +67,7 @@ export const ManageEventGeneralInfo = () => {
   useEffect(() => {
     if (eventId !== id) form.reset();
     if (event && (!form.isDirty() || event.id !== form.values.id)) {
-      const { createdAt, updatedAt, thumbnailFileName, ...eventData } = event;
-      form.setValues(eventData);
+      handleResetForm();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, event]);
@@ -85,9 +84,15 @@ export const ManageEventGeneralInfo = () => {
 
   const handleResetForm = () => {
     form.reset();
+    Object.keys(form.values).forEach((key) => {
+      delete form.values[key as keyof Partial<ScheduledEvent>];
+    });
     const { createdAt, updatedAt, thumbnailFileName, ...eventData } =
       event || {};
-    form.setValues(eventData);
+    Object.entries(eventData).forEach((keyVal) => {
+      const [key, value] = keyVal;
+      form.setFieldValue(key, value);
+    });
   };
 
   const toggleState = async () => {
@@ -95,8 +100,8 @@ export const ManageEventGeneralInfo = () => {
       setLoading(true);
       await handleSavingEvent();
       setLoading(false);
-      handleResetForm();
     }
+    handleResetForm();
     setMode(editState === "edit" ? "view" : "edit");
   };
 
