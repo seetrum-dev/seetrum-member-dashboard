@@ -18,6 +18,7 @@ interface FileRequirementManagerProps {
   onCreate: () => void;
   onEdit: (fileRequirement: FileRequirement) => void;
   onDelete: (fileRequirement: FileRequirement) => void;
+  onReorder: (fileRequirements: FileRequirement[]) => void;
 }
 
 export const FileRequirementManager = ({
@@ -25,6 +26,7 @@ export const FileRequirementManager = ({
   onCreate,
   onEdit,
   onDelete,
+  onReorder,
 }: FileRequirementManagerProps) => {
   const t = useMantineTheme();
   const { id: trainingId } = useParams();
@@ -139,6 +141,21 @@ export const FileRequirementManager = ({
     <MantineReactTable
       columns={columns}
       data={fileRequirements}
+      enableRowOrdering={true}
+      enableSorting={false}
+      mantineRowDragHandleProps={({ table }) => ({
+        onDragEnd: (event) => {
+          const { draggingRow, hoveredRow } = table.getState();
+          if (!draggingRow || !hoveredRow) return;
+          const sourceIndex = parseInt(draggingRow.id);
+          const destIndex = parseInt(hoveredRow.id);
+          const newOrder = [...fileRequirements];
+          const source = newOrder.splice(sourceIndex, 1)[0];
+          newOrder.splice(destIndex, 0, source);
+
+          onReorder(newOrder);
+        },
+      })}
       mantineTableHeadRowProps={{
         sx: (t) => ({ background: t.colors.gray[0] }),
       }}

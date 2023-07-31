@@ -31,6 +31,12 @@ export const ManageTrainingSettingPage = () => {
     getTrainingsById(trainingId).then((t) => setTraining(t));
   };
 
+  const handleReorder = async (frs: FileRequirement[]) => {
+    if (!trainingId || !training) return;
+    await updateTraining(trainingId, { fileRequirements: frs });
+    getTrainingsById(trainingId).then((t) => setTraining(t));
+  };
+
   return (
     <Stack spacing={24}>
       <Stack spacing={8}>
@@ -61,6 +67,9 @@ export const ManageTrainingSettingPage = () => {
         onEdit={(fr) => {
           setEditData(fr);
           handler.open();
+        }}
+        onReorder={(frs) => {
+          handleReorder(frs);
         }}
       />
       <AddEditFileDialog
