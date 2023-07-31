@@ -216,7 +216,7 @@ export const AdminTrainingInfo = ({ trainingId }: { trainingId: string }) => {
             : undefined}
         </Typography>
       </Flex>
-      {applicantCount && (
+      {applicantCount !== undefined && (
         <Flex gap={8} align="center">
           <IconPeople />
           <Typography textVariant="body-md">
