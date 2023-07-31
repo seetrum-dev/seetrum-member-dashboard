@@ -1,4 +1,5 @@
 import { pretyDateTime } from "@/lib/utils";
+import { useTrainings } from "@/modules/trainings/store/useTrainings";
 import { Training } from "@/types/models/training";
 import {
   IconCardHeading,
@@ -12,7 +13,6 @@ import { Flex, Skeleton, Stack, ThemeIcon } from "@mantine/core";
 import { Timestamp } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { Outlet, useParams } from "react-router-dom";
-import { useTrainings } from "../../store/useTrainings";
 
 export const ManageDetailTrainingLayout = () => {
   const { id } = useParams();

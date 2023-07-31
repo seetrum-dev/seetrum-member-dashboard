@@ -1,12 +1,16 @@
+import {
+  SupportingFileField,
+  ThumbnailPicker,
+} from "@/modules/trainingManagement/components/info";
+import {
+  TrainingInfoEditor,
+  TrainingInfoViewer,
+} from "@/modules/trainingManagement/pages/info";
+import { updateTraining } from "@/modules/trainings/services/trainingService";
+import { showErrorNotif } from "@/ui/notifications";
 import { Grid, Stack } from "@mantine/core";
 import { useState } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
-import { SupportingFileField } from "./supportingFileField";
-import { TrainingInfoEditor } from "./trainingInfoEditor";
-import { TrainingInfoViewer } from "./trainingInfoViewer";
-import { updateTraining } from "@/modules/trainings/services/trainingService";
-import { showErrorNotif } from "@/ui/notifications";
-import { ThumbnailPicker } from "./ThumbnailPicker";
 
 export const TrainingInfoManagement = () => {
   const [searchParams] = useSearchParams();

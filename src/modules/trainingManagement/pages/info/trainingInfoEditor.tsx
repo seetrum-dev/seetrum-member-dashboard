@@ -61,6 +61,7 @@ export const TrainingInfoEditor = ({
     if (id) {
       updateTraining(id);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, getTrainingsById]);
 
   const handleSubmit = form.onSubmit((values) => {

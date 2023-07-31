@@ -40,6 +40,7 @@ export const ThumbnailPicker: React.FC = () => {
 
       getInitialImage();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const removeFile = () => {

@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { ManageTrainingApplicants } from "./applicants";
-import { TrainingInfoManagement } from "./info/trainingInfoManagement";
+import { TrainingInfoManagement } from "./info";
 
 type manageTrainingTabId = "info" | "applicants" | "settings";
 export const ManageTrainingDetail = () => {

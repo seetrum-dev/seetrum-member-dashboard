@@ -1,7 +1,7 @@
 import { updateScheduledEvent } from "@/modules/event/services/eventService";
 import { useEventDetail } from "@/modules/event/store/useEventDetail";
 import { useEventsList } from "@/modules/event/store/useEventList";
-import { ConfirmationModal } from "@/modules/trainings/pages/manageTrainings/info/ThumbnailPicker";
+import { ConfirmationModal } from "@/modules/trainingManagement/components/info/ThumbnailPicker";
 import { useFileURLStore, uploadFile } from "@/services/firebase/storage";
 import { Typography } from "@/ui/Typography";
 import { Stack, Flex, FileButton, Button, Image } from "@mantine/core";

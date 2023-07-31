@@ -1,10 +1,13 @@
+import { CreateTrainingModal } from "@/modules/trainings/components/CreateTrainingModal";
+import {
+  AdminTrainingInfo,
+  TrainingCard,
+} from "@/modules/trainings/components/TrainingCard";
+import { useTrainings } from "@/modules/trainings/store/useTrainings";
 import { IconPlus } from "@/ui/Icons";
 import { Typography } from "@/ui/Typography";
-import { useTrainings } from "../../store/useTrainings";
-import { AdminTrainingInfo, TrainingCard } from "../../components/TrainingCard";
-import { CreateTrainingModal } from "../../components/CreateTrainingModal";
-import { useEffect, useState } from "react";
 import { Button, Group, Skeleton, Stack } from "@mantine/core";
+import { useEffect, useState } from "react";
 
 export const ManageTrainingsPage = () => {
   const [open, setOpen] = useState(false);
