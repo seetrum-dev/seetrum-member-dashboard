@@ -1,8 +1,17 @@
 import { Typography } from "@/ui/Typography";
 import { Stack } from "@mantine/core";
-import { FileRequirementManager } from "../../components/settings";
+import {
+  AddEditFileDialog,
+  FileRequirementManager,
+} from "../../components/settings";
+import { useDisclosure } from "@mantine/hooks";
+import { useState } from "react";
+import { FileRequirement } from "@/types/models/training";
 
 export const ManageTrainingSettingPage = () => {
+  const [opened, handler] = useDisclosure(false);
+  const [editFileRequirement, setEditData] = useState<FileRequirement>();
+
   return (
     <Stack spacing={24}>
       <Stack spacing={8}>
@@ -26,7 +35,22 @@ export const ManageTrainingSettingPage = () => {
           documents efficiently and accurately.
         </Typography>
       </Stack>
-      <FileRequirementManager />
+      <FileRequirementManager
+        onCreate={() => handler.open()}
+        onDelete={(fr) => console.log(1349, fr)}
+        onEdit={(fr) => {
+          setEditData(fr);
+          handler.open();
+        }}
+      />
+      <AddEditFileDialog
+        fileRequirement={editFileRequirement}
+        isOpen={opened}
+        onClose={() => {
+          handler.close();
+          setEditData(undefined);
+        }}
+      />
     </Stack>
   );
 };

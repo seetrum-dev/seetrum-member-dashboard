@@ -1,13 +1,31 @@
 import { kLineClamp } from "@/lib/utils";
 import { useTrainings } from "@/modules/trainings/store/useTrainings";
 import { FileRequirement, Training } from "@/types/models/training";
-import { IconEditSquare, IconTrash } from "@/ui/Icons";
-import { Button, Flex, Loader, SelectItem, Stack } from "@mantine/core";
+import { IconEditSquare, IconPlus, IconTrash } from "@/ui/Icons";
+import {
+  Button,
+  Flex,
+  Loader,
+  SelectItem,
+  Stack,
+  useMantineTheme,
+} from "@mantine/core";
 import { MRT_ColumnDef, MantineReactTable } from "mantine-react-table";
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 
-export const FileRequirementManager = () => {
+interface FileRequirementManagerProps {
+  onCreate: () => void;
+  onEdit: (fileRequirement: FileRequirement) => void;
+  onDelete: (fileRequirement: FileRequirement) => void;
+}
+
+export const FileRequirementManager = ({
+  onCreate,
+  onEdit,
+  onDelete,
+}: FileRequirementManagerProps) => {
+  const t = useMantineTheme();
   const { id: trainingId } = useParams();
   const [training, setTraining] = useState<Training | undefined>();
   const { getTrainingsById } = useTrainings();
@@ -27,7 +45,7 @@ export const FileRequirementManager = () => {
       {
         header: "File Format",
         accessorFn(originalRow) {
-          return originalRow.accepts.includes("images") ? "Images" : "PDF";
+          return originalRow.accepts.includes("image") ? "Images" : "PDF";
         },
         id: "accepts",
         maxSize: 100,
@@ -87,7 +105,9 @@ export const FileRequirementManager = () => {
                 p={9.5}
                 radius="lg"
                 color="dark"
-                onClick={() => {}}
+                onClick={() => {
+                  onEdit(row.original);
+                }}
               >
                 <IconEditSquare size={18} />
               </Button>
@@ -96,7 +116,9 @@ export const FileRequirementManager = () => {
                 p={9.5}
                 radius="lg"
                 color="dark"
-                onClick={() => {}}
+                onClick={() => {
+                  onDelete(row.original);
+                }}
               >
                 <IconTrash size={18} />
               </Button>
@@ -105,7 +127,7 @@ export const FileRequirementManager = () => {
         },
       },
     ],
-    []
+    [onEdit, onDelete]
   );
 
   if (!trainingId || !training || !training?.fileRequirements)
@@ -128,9 +150,25 @@ export const FileRequirementManager = () => {
           e.stopPropagation();
           e.preventDefault();
 
-          // TODO: handle row click actions
+          onEdit(row.original);
         },
       })}
+      renderBottomToolbarCustomActions={() => {
+        return (
+          <Button
+            radius={8}
+            ml={8}
+            sx={{
+              borderColor: t.fn.rgba(t.colors.night[5], 0.12),
+            }}
+            variant="outline"
+            leftIcon={<IconPlus size={18} />}
+            onClick={onCreate}
+          >
+            Add a new file requirement
+          </Button>
+        );
+      }}
       mantinePaperProps={{
         sx: { borderRadius: 16, boxShadow: "none" },
       }}
