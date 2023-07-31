@@ -1,16 +1,35 @@
+import { updateTraining } from "@/modules/trainings/services/trainingService";
+import { useTrainings } from "@/modules/trainings/store/useTrainings";
+import { FileRequirement, Training } from "@/types/models/training";
 import { Typography } from "@/ui/Typography";
 import { Stack } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import {
   AddEditFileDialog,
   FileRequirementManager,
 } from "../../components/settings";
-import { useDisclosure } from "@mantine/hooks";
-import { useState } from "react";
-import { FileRequirement } from "@/types/models/training";
 
 export const ManageTrainingSettingPage = () => {
+  const { id: trainingId } = useParams();
+  const { getTrainingsById } = useTrainings();
+  const [training, setTraining] = useState<Training | null>(null);
   const [opened, handler] = useDisclosure(false);
   const [editFileRequirement, setEditData] = useState<FileRequirement>();
+
+  useEffect(() => {
+    if (trainingId) getTrainingsById(trainingId).then((t) => setTraining(t));
+  }, [trainingId, getTrainingsById, opened, editFileRequirement]);
+
+  const handleDeleteFR = async (fr: FileRequirement) => {
+    if (!trainingId || !training) return;
+    const newFR = training?.fileRequirements.filter(
+      (f) => f.title !== fr.title
+    );
+    await updateTraining(trainingId, { fileRequirements: newFR });
+    getTrainingsById(trainingId).then((t) => setTraining(t));
+  };
 
   return (
     <Stack spacing={24}>
@@ -36,8 +55,9 @@ export const ManageTrainingSettingPage = () => {
         </Typography>
       </Stack>
       <FileRequirementManager
+        fileRequirements={training?.fileRequirements}
         onCreate={() => handler.open()}
-        onDelete={(fr) => console.log(1349, fr)}
+        onDelete={(fr) => handleDeleteFR(fr)}
         onEdit={(fr) => {
           setEditData(fr);
           handler.open();

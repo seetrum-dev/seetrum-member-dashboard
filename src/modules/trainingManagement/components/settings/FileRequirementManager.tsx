@@ -1,6 +1,5 @@
 import { kLineClamp } from "@/lib/utils";
-import { useTrainings } from "@/modules/trainings/store/useTrainings";
-import { FileRequirement, Training } from "@/types/models/training";
+import { FileRequirement } from "@/types/models/training";
 import { IconEditSquare, IconPlus, IconTrash } from "@/ui/Icons";
 import {
   Button,
@@ -11,29 +10,24 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { MRT_ColumnDef, MantineReactTable } from "mantine-react-table";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useParams } from "react-router-dom";
 
 interface FileRequirementManagerProps {
+  fileRequirements?: FileRequirement[];
   onCreate: () => void;
   onEdit: (fileRequirement: FileRequirement) => void;
   onDelete: (fileRequirement: FileRequirement) => void;
 }
 
 export const FileRequirementManager = ({
+  fileRequirements,
   onCreate,
   onEdit,
   onDelete,
 }: FileRequirementManagerProps) => {
   const t = useMantineTheme();
   const { id: trainingId } = useParams();
-  const [training, setTraining] = useState<Training | undefined>();
-  const { getTrainingsById } = useTrainings();
-  useEffect(() => {
-    trainingId &&
-      getTrainingsById(trainingId).then((t) => setTraining(t || undefined));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [trainingId]);
 
   const columns = useMemo<MRT_ColumnDef<FileRequirement>[]>(
     () => [
@@ -105,7 +99,9 @@ export const FileRequirementManager = ({
                 p={9.5}
                 radius="lg"
                 color="dark"
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
                   onEdit(row.original);
                 }}
               >
@@ -116,7 +112,9 @@ export const FileRequirementManager = ({
                 p={9.5}
                 radius="lg"
                 color="dark"
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
                   onDelete(row.original);
                 }}
               >
@@ -130,7 +128,7 @@ export const FileRequirementManager = ({
     [onEdit, onDelete]
   );
 
-  if (!trainingId || !training || !training?.fileRequirements)
+  if (!trainingId || !fileRequirements)
     return (
       <Stack h={150} w="100%" justify="center" align="center">
         <Loader />
@@ -140,7 +138,7 @@ export const FileRequirementManager = ({
   return (
     <MantineReactTable
       columns={columns}
-      data={training.fileRequirements}
+      data={fileRequirements}
       mantineTableHeadRowProps={{
         sx: (t) => ({ background: t.colors.gray[0] }),
       }}
