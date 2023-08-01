@@ -6,6 +6,7 @@ import {
   IconCopy,
   IconEditSquare,
   IconPlus,
+  IconTrash,
 } from "@/ui/Icons";
 import { Typography } from "@/ui/Typography";
 import {
@@ -22,7 +23,7 @@ import {
 import { useForm } from "@mantine/form";
 import { useDebouncedValue } from "@mantine/hooks";
 import { MRT_ColumnDef, MantineReactTable } from "mantine-react-table";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 
 interface AdditionalQuestionFormProps {
@@ -36,6 +37,30 @@ export const AdditionalQuestionForm = ({
 }: AdditionalQuestionFormProps) => {
   const t = useMantineTheme();
   const { id: trainingId } = useParams();
+  const [loading, setLoading] = useState<"create" | "duplicate" | "delete">();
+
+  const handleDuplicate = async (question: FormMeta) => {
+    if (!trainingId || !additionalQuestions) return;
+
+    setLoading("duplicate");
+    await updateTraining(trainingId, {
+      formMetas: [...additionalQuestions, question],
+    });
+    onChange();
+    setLoading(undefined);
+  };
+
+  const handleDelete = async (index: number) => {
+    if (!trainingId || !additionalQuestions) return;
+
+    setLoading("delete");
+    console.log(additionalQuestions, index);
+    await updateTraining(trainingId, {
+      formMetas: additionalQuestions.filter((q, id) => id !== index),
+    });
+    onChange();
+    setLoading(undefined);
+  };
 
   const colums = useMemo<MRT_ColumnDef<FormMeta>[]>(
     () => [
@@ -61,10 +86,13 @@ export const AdditionalQuestionForm = ({
         header: "Actions",
         enableColumnActions: false,
         enableSorting: false,
-        size: 80,
         mantineTableBodyCellProps(props) {
           return {
-            width: 80,
+            mx: 0,
+            width: 120,
+            div: {
+              margin: 0,
+            },
           };
         },
         Cell({ row, renderedCellValue, table, cell }) {
@@ -75,13 +103,14 @@ export const AdditionalQuestionForm = ({
             }
           };
           return (
-            <Flex gap={4} maw={80} m={0} justify="center">
+            <Flex gap={4} m={0} justify="flex-end">
               <ActionIcon
+                loading={loading === "duplicate"}
                 radius="xl"
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  handleDuplicate();
+                  handleDuplicate(row.original);
                 }}
               >
                 <IconCopy size={18} />
@@ -95,6 +124,9 @@ export const AdditionalQuestionForm = ({
                 }}
               >
                 <IconEditSquare size={18} />
+              </ActionIcon>
+              <ActionIcon radius="xl" onClick={() => handleDelete(row.index)}>
+                <IconTrash size={18} />
               </ActionIcon>
               <ActionIcon
                 radius="xl"
@@ -117,11 +149,23 @@ export const AdditionalQuestionForm = ({
         },
       },
     ],
-    []
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [handleDelete, handleDuplicate, trainingId]
   );
 
-  const handleCreate = async () => {};
-  const handleDuplicate = async () => {};
+  const handleCreate = async () => {
+    if (!trainingId || !additionalQuestions) return;
+
+    setLoading("create");
+    await updateTraining(trainingId, {
+      formMetas: [
+        ...additionalQuestions,
+        { data: [], label: "Question", inputType: "input", required: false },
+      ],
+    });
+    onChange();
+    setLoading(undefined);
+  };
   const handleReorder = async (quesitons: FormMeta[]) => {
     if (!trainingId) return;
 
@@ -161,6 +205,7 @@ export const AdditionalQuestionForm = ({
           <Button
             radius={8}
             ml={8}
+            loading={loading === "create"}
             sx={{
               borderColor: t.fn.rgba(t.colors.night[5], 0.12),
             }}
@@ -198,7 +243,6 @@ export const AdditionalQuestionForm = ({
       }}
       initialState={{
         density: "xs",
-        columnPinning: { right: ["actions"] },
       }}
       enableExpandAll={false}
       mantineTableBodyCellProps={({ column }) => ({
@@ -210,6 +254,14 @@ export const AdditionalQuestionForm = ({
         w: column.id.includes("expand") ? 0 : undefined,
         maw: column.id.includes("expand") ? 0 : undefined,
         display: column.id.includes("expand") ? "none" : undefined,
+        sx: column.id.includes("action")
+          ? {
+              div: {
+                justifyContent: "end",
+                margin: "0 16px 0 0",
+              },
+            }
+          : undefined,
       })}
       positionExpandColumn="last"
     />
