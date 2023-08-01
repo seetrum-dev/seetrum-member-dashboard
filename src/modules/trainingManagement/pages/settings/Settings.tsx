@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
   AddEditFileDialog,
+  AdditionalQuestionForm,
   FileRequirementManager,
 } from "../../components/settings";
 
@@ -49,7 +50,13 @@ export const ManageTrainingSettingPage = () => {
           over the information collected.
         </Typography>
       </Stack>
-      {/* TODO: Put Additional information question section here */}
+      <AdditionalQuestionForm
+        additionalQuestions={training?.formMetas}
+        onChange={() => {
+          getTrainingsById(trainingId!).then((t) => setTraining(t));
+        }}
+      />
+
       <Stack spacing={8}>
         <Typography textVariant="title-lg">
           Manage application file requirement

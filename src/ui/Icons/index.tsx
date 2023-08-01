@@ -17,6 +17,7 @@ import {
   BsClockHistory,
   BsDownload,
   BsExclamationCircle,
+  BsFiles,
   BsFiletypeJpg,
   BsFiletypePdf,
   BsGear,
@@ -50,6 +51,7 @@ export const IconX = BsX;
 export const IconPlus = BsPlus;
 export const IconHome = BsHouse;
 export const IconSave = BsSave2;
+export const IconCopy = BsFiles;
 export const IconCalendar = BsCalendarWeek;
 export const IconLightBulb = BsLightbulb;
 export const IconBriefcase = BsBriefcase;
