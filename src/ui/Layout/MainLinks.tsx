@@ -173,15 +173,19 @@ export const MainLinks: React.FC<{ onNavigate: (path: string) => void }> = ({
     const toAdmin = Boolean(mode === "admin");
     if (adminMode && toAdmin) return;
 
+    console.log(pathname);
+    const adminPathname = pathname === "/" ? "/members/individual" : pathname;
+    // If the path is /admin, remove the /admin part
     var navigateTo = toAdmin
-      ? "/admin" + pathname
+      ? "/admin" + adminPathname
       : pathname
           .split("/admin")
           .join("")
+          // Remove the tabId from the path, if it's there
           .split(tabId ? `/${tabId}` : "")
           .join("");
+    // If the path is /members/ and we're not in admin mode, go to the home page
     if (pathname.includes("/members/") && !toAdmin) navigateTo = "/";
-
     setMode(toAdmin);
     navigate(navigateTo);
   };
