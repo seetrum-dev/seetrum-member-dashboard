@@ -35,6 +35,7 @@ export const AdditionalQuestionForm = ({
   onChange,
 }: AdditionalQuestionFormProps) => {
   const t = useMantineTheme();
+  const { id: trainingId } = useParams();
 
   const colums = useMemo<MRT_ColumnDef<FormMeta>[]>(
     () => [
@@ -121,8 +122,11 @@ export const AdditionalQuestionForm = ({
 
   const handleCreate = async () => {};
   const handleDuplicate = async () => {};
-  const handleReorder = (quesitons: FormMeta[]) => {
-    console.table(quesitons);
+  const handleReorder = async (quesitons: FormMeta[]) => {
+    if (!trainingId) return;
+
+    await updateTraining(trainingId, { formMetas: quesitons });
+    onChange();
   };
 
   if (!additionalQuestions)
@@ -137,7 +141,7 @@ export const AdditionalQuestionForm = ({
       columns={colums}
       data={additionalQuestions}
       enableTopToolbar={false}
-      enableRowDragging
+      enableRowOrdering
       enableSorting={false}
       mantineRowDragHandleProps={({ table }) => ({
         onDragEnd: (event) => {
