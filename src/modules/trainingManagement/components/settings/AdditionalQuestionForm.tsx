@@ -283,7 +283,7 @@ const FormMetaDetailPane = ({
   const form = useForm({
     initialValues: formMeta as FormMeta,
   });
-  const [debbounceForm] = useDebouncedValue(form.values, 500);
+  const [debbounceForm] = useDebouncedValue(form.values, 1000);
 
   useEffect(() => {
     handleSubmit();
@@ -304,14 +304,16 @@ const FormMetaDetailPane = ({
     onChage();
   });
 
-  const handleOption = (index: number, val: string) => {
-    form.setFieldValue(
-      "data",
-      (form.values["data"].length === 0 ? [""] : form.values.data).map(
-        (op, id) => (id === index ? val : op)
-      )
-    );
+  const handleOption = (index: number, val: string | undefined) => {
+    const options: (string | undefined)[] = availableOptions;
+
+    options[index] = val;
+    const clearOptions = options.filter((op) => typeof op !== "undefined");
+    form.setFieldValue("data", clearOptions as string[]);
   };
+
+  const availableOptions =
+    form.values["data"].length === 0 ? [""] : form.values.data;
 
   return (
     <form>
@@ -339,27 +341,55 @@ const FormMetaDetailPane = ({
         {form.values["inputType"] === "select" ? (
           <Stack spacing={16}>
             <Typography textVariant="title-md">Answer options</Typography>
-            {(form.values["data"].length === 0 ? [""] : form.values.data).map(
-              (data, index) => {
-                return (
-                  <Flex key={`${index}-${data}`} align="center" gap={8}>
-                    <Typography textVariant="body-lg">{index + 1}.</Typography>
-                    <TextInput
-                      sx={{
-                        width: "min(100%, 430px)",
-                        maxWidth: "min(100%, 430px)",
-                        flex: 1,
+            {availableOptions.map((data, index) => {
+              return (
+                <Flex key={index} align="center" gap={8}>
+                  <Typography textVariant="body-lg">{index + 1}.</Typography>
+                  <TextInput
+                    sx={{
+                      width: "min(100%, 430px)",
+                      maxWidth: "min(100%, 430px)",
+                      flex: 1,
+                    }}
+                    placeholder={`Option ${index + 1}`}
+                    onChange={async (e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleOption(index, e.target.value);
+                    }}
+                    value={form.values["data"][index] || ""}
+                  />
+                  {availableOptions.length === 1 ? undefined : (
+                    <ActionIcon
+                      radius={8}
+                      size="lg"
+                      variant="outline"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleOption(index, undefined);
                       }}
-                      placeholder={`Option ${index + 1}`}
-                      onChange={async (e) => {
-                        handleOption(index, e.target.value);
+                    >
+                      <IconTrash size={18} />
+                    </ActionIcon>
+                  )}
+                  {index + 1 === availableOptions.length && (
+                    <ActionIcon
+                      radius={8}
+                      size="lg"
+                      variant="outline"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleOption(index + 1, "");
                       }}
-                      value={form.values["data"][index] || ""}
-                    />
-                  </Flex>
-                );
-              }
-            )}
+                    >
+                      <IconPlus size={20} />
+                    </ActionIcon>
+                  )}
+                </Flex>
+              );
+            })}
           </Stack>
         ) : undefined}
         <Switch
