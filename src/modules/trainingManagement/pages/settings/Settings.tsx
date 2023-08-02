@@ -29,7 +29,8 @@ export const ManageTrainingSettingPage = () => {
       (f) => f.title !== fr.title
     );
     await updateTraining(trainingId, { fileRequirements: newFR });
-    getTrainingsById(trainingId).then((t) => setTraining(t));
+    const t = await getTrainingsById(trainingId);
+    setTraining(t);
   };
 
   const handleReorder = async (frs: FileRequirement[]) => {
@@ -70,7 +71,7 @@ export const ManageTrainingSettingPage = () => {
       <FileRequirementManager
         fileRequirements={training?.fileRequirements}
         onCreate={() => handler.open()}
-        onDelete={(fr) => handleDeleteFR(fr)}
+        onDelete={async (fr) => await handleDeleteFR(fr)}
         onEdit={(fr) => {
           setEditData(fr);
           handler.open();

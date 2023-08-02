@@ -37,7 +37,7 @@ export const AdditionalQuestionForm = ({
 }: AdditionalQuestionFormProps) => {
   const t = useMantineTheme();
   const { id: trainingId } = useParams();
-  const [loading, setLoading] = useState<"create" | "duplicate" | "delete">();
+  const [loading, setLoading] = useState<"create" | "duplicate" | string>();
 
   const handleDuplicate = async (question: FormMeta) => {
     if (!trainingId || !additionalQuestions) return;
@@ -53,7 +53,7 @@ export const AdditionalQuestionForm = ({
   const handleDelete = async (index: number) => {
     if (!trainingId || !additionalQuestions) return;
 
-    setLoading("delete");
+    setLoading(`delete-${index}`);
     await updateTraining(trainingId, {
       formMetas: additionalQuestions.filter((q, id) => id !== index),
     });
@@ -85,14 +85,11 @@ export const AdditionalQuestionForm = ({
         header: "Actions",
         enableColumnActions: false,
         enableSorting: false,
-        mantineTableBodyCellProps(props) {
-          return {
-            mx: 0,
-            width: 120,
-            div: {
-              margin: 0,
-            },
-          };
+        maxSize: 100,
+        mantineColumnActionsButtonProps: {
+          sx: {
+            display: "none",
+          },
         },
         Cell({ row, renderedCellValue, table, cell }) {
           const expandRow = () => {
@@ -106,6 +103,7 @@ export const AdditionalQuestionForm = ({
               <ActionIcon
                 loading={loading === "duplicate"}
                 radius="xl"
+                color="dark"
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
@@ -115,6 +113,7 @@ export const AdditionalQuestionForm = ({
                 <IconCopy size={18} />
               </ActionIcon>
               <ActionIcon
+                color="dark"
                 radius="xl"
                 onClick={(e) => {
                   e.preventDefault();
@@ -124,10 +123,16 @@ export const AdditionalQuestionForm = ({
               >
                 <IconEditSquare size={18} />
               </ActionIcon>
-              <ActionIcon radius="xl" onClick={() => handleDelete(row.index)}>
+              <ActionIcon
+                color="dark"
+                loading={loading === `delete-${row.index}`}
+                radius="xl"
+                onClick={() => handleDelete(row.index)}
+              >
                 <IconTrash size={18} />
               </ActionIcon>
               <ActionIcon
+                color="dark"
                 radius="xl"
                 onClick={(e) => {
                   e.preventDefault();

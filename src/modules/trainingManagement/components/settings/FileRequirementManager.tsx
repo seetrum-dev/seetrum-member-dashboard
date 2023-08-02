@@ -2,6 +2,7 @@ import { kLineClamp } from "@/lib/utils";
 import { FileRequirement } from "@/types/models/training";
 import { IconEditSquare, IconPlus, IconTrash } from "@/ui/Icons";
 import {
+  ActionIcon,
   Button,
   Flex,
   Loader,
@@ -10,14 +11,14 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { MRT_ColumnDef, MantineReactTable } from "mantine-react-table";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 
 interface FileRequirementManagerProps {
   fileRequirements?: FileRequirement[];
   onCreate: () => void;
   onEdit: (fileRequirement: FileRequirement) => void;
-  onDelete: (fileRequirement: FileRequirement) => void;
+  onDelete: (fileRequirement: FileRequirement) => Promise<void>;
   onReorder: (fileRequirements: FileRequirement[]) => void;
 }
 
@@ -30,6 +31,7 @@ export const FileRequirementManager = ({
 }: FileRequirementManagerProps) => {
   const t = useMantineTheme();
   const { id: trainingId } = useParams();
+  const [loading, setLoading] = useState<string>();
 
   const columns = useMemo<MRT_ColumnDef<FileRequirement>[]>(
     () => [
@@ -77,6 +79,7 @@ export const FileRequirementManager = ({
         header: "Description",
         accessorKey: "description",
         enableGlobalFilter: false,
+        minSize: 500,
         Cell(props) {
           return (
             <Stack sx={{ ...kLineClamp(1) }}>{props.renderedCellValue}</Stack>
@@ -93,12 +96,20 @@ export const FileRequirementManager = ({
             display: "none",
           },
         },
+        mantineTableHeadCellProps({ column }) {
+          return {
+            sx: {
+              div: {
+                justifyContent: column.id === "action" ? "center" : undefined,
+              },
+            },
+          };
+        },
         Cell({ row }) {
           return (
             <Flex w="100%" align="center" justify="center">
-              <Button
+              <ActionIcon
                 variant="subtle"
-                p={9.5}
                 radius="lg"
                 color="dark"
                 onClick={(e) => {
@@ -108,25 +119,28 @@ export const FileRequirementManager = ({
                 }}
               >
                 <IconEditSquare size={18} />
-              </Button>
-              <Button
+              </ActionIcon>
+              <ActionIcon
                 variant="subtle"
-                p={9.5}
                 radius="lg"
+                loading={loading === `delete-${row.id}`}
                 color="dark"
-                onClick={(e) => {
+                onClick={async (e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  onDelete(row.original);
+                  setLoading(`delete-${row.id}`);
+                  await onDelete(row.original);
+                  setLoading(undefined);
                 }}
               >
                 <IconTrash size={18} />
-              </Button>
+              </ActionIcon>
             </Flex>
           );
         },
       },
     ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [onEdit, onDelete]
   );
 
