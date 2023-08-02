@@ -19,19 +19,23 @@ const features = [
   {
     icon: <IconAward />,
     title: "Explore Trainings",
+    label: "traninings",
     description:
       "Enhance your expertise in energy efficiency through our diverse training programs and unlock new career opportunities.",
     link: "/trainings",
   },
   {
     icon: <IconCalendar />,
+    label: "events",
     title: "Discover Events",
     description:
       "Explore upcoming events and connect with the energy efficiency community for insightful discussions, workshops, and networking.",
+    link: "/events",
   },
   {
     icon: <IconBriefcase />,
     title: "Pursue Opportunities",
+    label: "opportunities",
     description:
       "Make a real impact by discovering project opportunities that align with your skills and interests, driving sustainable change.",
   },
@@ -52,6 +56,7 @@ export const FeatureCollectionCard = () => {
 interface FeatureCardProps {
   icon: React.ReactNode;
   title: string;
+  label: string;
   description: string;
   link?: string;
 }
@@ -98,7 +103,7 @@ const FeatureCard: React.FC<FeatureCardProps> = (featureData) => {
               navigate(featureData.link!);
             }}
           >
-            View all trainings
+            View all {featureData.label}
           </Button>
         ) : (
           <Badge sx={(t) => ({ textTransform: "unset" })}>Coming soon</Badge>

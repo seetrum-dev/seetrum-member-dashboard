@@ -121,7 +121,7 @@ export const RegisterForm: React.FC = () => {
           name: isNotEmpty("Name can't be empty")(name),
           phoneNumber: matches(
             /^(\+62|62)?[\s-]?0?8[1-9]{1}\d{1}[\s-]?\d{4}[\s-]?\d{2,5}$/,
-            "provide valid phone number"
+            "Provide valid phone number"
           )(phoneNumber),
           address: isNotEmpty("Address can't be empty")(address),
           informationChannel: isNotEmpty(
@@ -139,7 +139,7 @@ export const RegisterForm: React.FC = () => {
           org_pic_name: isNotEmpty("Name can't be empty")(org_pic_name),
           org_pic_phone_number: matches(
             /^(\+62|62)?[\s-]?0?8[1-9]{1}\d{1}[\s-]?\d{4}[\s-]?\d{2,5}$/,
-            "provide valid phone number"
+            "Provide valid phone number"
           )(org_pic_phone_number),
         };
       }
@@ -236,7 +236,7 @@ export const RegisterForm: React.FC = () => {
                 />
                 <PasswordInput
                   label="Confirmation your password"
-                  placeholder="Enter your password"
+                  placeholder="Re-enter your password "
                   withAsterisk
                   {...form.getInputProps("confirmPassword")}
                 />
@@ -269,14 +269,16 @@ export const RegisterForm: React.FC = () => {
                   label={userTypeCopy[userType].name}
                   autoFocus
                   type="text"
-                  placeholder="Nama"
+                  placeholder={`Enter your ${
+                    isOrganization ? "organization name" : "name"
+                  }`}
                   withAsterisk
                   {...form.getInputProps("name")}
                 />
                 {isOrganization ? (
                   <Textarea
                     label={"Address"}
-                    placeholder="Enter address"
+                    placeholder="Enter your address"
                     withAsterisk
                     {...form.getInputProps("address")}
                   />
@@ -304,7 +306,7 @@ export const RegisterForm: React.FC = () => {
                 <TextInput
                   label="Phone number"
                   type="text"
-                  placeholder="Nomor Telp"
+                  placeholder="Enter your phone number"
                   inputMode="numeric"
                   withAsterisk
                   {...form.getInputProps("phoneNumber")}
@@ -428,7 +430,7 @@ const InfoSummary: React.FC<InfoSummaryProps> = ({ label, value = "-" }) => {
         {label}
       </Text>
       <Text c="dimmed" size="sm">
-        {value || "empty"}
+        {value || "-"}
       </Text>
     </Box>
   );
