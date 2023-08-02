@@ -54,7 +54,6 @@ export const AdditionalQuestionForm = ({
     if (!trainingId || !additionalQuestions) return;
 
     setLoading("delete");
-    console.log(additionalQuestions, index);
     await updateTraining(trainingId, {
       formMetas: additionalQuestions.filter((q, id) => id !== index),
     });
@@ -173,7 +172,7 @@ export const AdditionalQuestionForm = ({
     onChange();
   };
 
-  if (!additionalQuestions)
+  if (additionalQuestions === undefined)
     return (
       <Stack h={150} w="100%" justify="center" align="center">
         <Loader />

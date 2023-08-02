@@ -51,7 +51,7 @@ export const ManageTrainingSettingPage = () => {
         </Typography>
       </Stack>
       <AdditionalQuestionForm
-        additionalQuestions={training?.formMetas}
+        additionalQuestions={training?.formMetas || []}
         onChange={() => {
           getTrainingsById(trainingId!).then((t) => setTraining(t));
         }}
