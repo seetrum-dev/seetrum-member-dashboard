@@ -25,14 +25,21 @@ export const EventManagementList = () => {
   const [createEvent, setCreateEvent] = useState<boolean>(false);
   const [search, setSearch] = useState<string>();
   const navigate = useNavigate();
-  const { events, getEvents, sortEvents, loading, createEventFn } =
-    useEventsList((s) => ({
-      events: s.events,
-      getEvents: s.getEvents,
-      sortEvents: s.sortEvents,
-      loading: s.loading,
-      createEventFn: s.createEvent,
-    }));
+  const {
+    events,
+    getEvents,
+    sortEvents,
+    loading,
+    createEventFn,
+    setValidStatus,
+  } = useEventsList((s) => ({
+    events: s.events,
+    getEvents: s.getEvents,
+    sortEvents: s.sortEvents,
+    loading: s.loading,
+    createEventFn: s.createEvent,
+    setValidStatus: s.setValidStatus,
+  }));
   const [dateFilter, setDateFilter] = useState<Date>();
   useEffect(() => {
     getEvents();
@@ -129,6 +136,7 @@ export const EventManagementList = () => {
           onDone={async (event) => {
             console.log(1349, event);
             const newEvent = await createEventFn(event);
+            setValidStatus(false);
             // got to the new event detail page
             navigate(`${newEvent.id}`);
           }}

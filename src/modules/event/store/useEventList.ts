@@ -11,7 +11,6 @@ interface EventListStore {
   getEvents: () => Promise<ScheduledEvent[]>;
   sortEvents: (orderBy: keyof ScheduledEvent, sortBy: "asc" | "desc") => void;
   createEvent: (event: CreateScheduledEventModel) => Promise<ScheduledEvent>;
-  isValid: boolean;
   checkValidity(): boolean;
   loading: boolean;
   expiredAt: number;
@@ -22,8 +21,8 @@ export const useEventsList = create(
   devtools<EventListStore>((set, get) => ({
     checkValidity: () => {
       const now = Date.now();
-      const { events, expiredAt, isValid } = get();
-      return events !== undefined && now < expiredAt && isValid;
+      const { events, expiredAt } = get();
+      return events !== undefined && now < expiredAt;
     },
     isValid: false,
     expiredAt: 0,
@@ -38,7 +37,7 @@ export const useEventsList = create(
       const events = await getAllScheduledEvents();
       // expired in 5 minutes
       const expiredAt = Date.now() + 5 * 60 * 1000;
-      set({ events, loading: false, expiredAt, isValid: true });
+      set({ events, loading: false, expiredAt });
       return events;
     },
     async sortEvents(orderBy, sortBy) {
@@ -69,7 +68,9 @@ export const useEventsList = create(
       return newEvent;
     },
     setValidStatus(val) {
-      set({ isValid: val });
+      if (!val) {
+        set({ expiredAt: Date.now() });
+      }
     },
   }))
 );
