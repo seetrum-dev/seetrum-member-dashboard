@@ -15,7 +15,7 @@ import { Timestamp } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { Outlet, useParams } from "react-router-dom";
 
-export const ManageDetailTrainingLayout = () => {
+export const ManageDetailOpportunitiesLayout = () => {
   const { id } = useParams();
   const { getTrainingsById } = useTrainings((s) => ({
     getTrainingsById: s.getTrainingsById,
@@ -41,9 +41,9 @@ export const ManageDetailTrainingLayout = () => {
   );
 };
 
-const manageTrainingTabbarData: TabbarData[] = [
+const manageOpportunitiesTabbarData: TabbarData[] = [
   {
-    label: "Training info",
+    label: "Opportunities info",
     icon: <IconCardHeading size={24} />,
     value: "info",
   },
@@ -70,7 +70,7 @@ const Header: React.FC<HeaderProps> = ({ updatedAt, title }) => {
       <Stack mx={-20} px={20}>
         <Skeleton h={47} w="60%" />
         <Skeleton h={26} w="25%" />
-        <TabBar data={manageTrainingTabbarData} />
+        <TabBar data={manageOpportunitiesTabbarData} />
       </Stack>
     );
   }
@@ -98,7 +98,7 @@ const Header: React.FC<HeaderProps> = ({ updatedAt, title }) => {
           </Typography>
         </Flex>
       </Stack>
-      <TabBar data={manageTrainingTabbarData} />
+      <TabBar data={manageOpportunitiesTabbarData} />
     </Stack>
   );
 };

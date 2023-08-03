@@ -6,6 +6,7 @@ import React, { useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   IconAdminAward,
+  IconAdminBriefcase,
   IconAdminCalendar,
   IconAdminPeople,
   IconAward,
@@ -156,9 +157,9 @@ const data: MainLinkProps[] = [
     isAdmin: true,
   },
   {
-    icon: <IconBriefcase size="20px" />,
-    label: "Opportunity",
-    // link: "/opportunity",
+    icon: <IconAdminBriefcase size="20px" />,
+    label: "Opportunities",
+    link: "/admin/opportunities",
     isAdmin: true,
   },
 ];

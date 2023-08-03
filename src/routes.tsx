@@ -30,6 +30,8 @@ import {
 import { OpportunitiesListPage } from "./modules/opportunities/pages/OpportunitiesListPage";
 import { OpportunityDetailPage } from "./modules/opportunities/pages/DetailPage";
 import { MyOpportunitiesListPage } from "./modules/opportunities/pages/MyOpportunitiesListPage";
+import { ManageDetailOpportunitiesLayout } from "./modules/opportunitiesManagement/layouts";
+import { ManageOpportunitiesPage } from "./modules/opportunitiesManagement/pages";
 
 const Redirector = ({ path }: { path: string }) => {
   const navigate = useNavigate();
@@ -182,6 +184,31 @@ const ROUTES = {
               {
                 path: ":id",
                 element: <ManageDetailTrainingLayout />,
+                children: [
+                  {
+                    path: ":tabId?",
+                    element: <ManageTrainingDetail />,
+                    children: [
+                      {
+                        path: ":applicantId",
+                        element: <ApplicantDetails />,
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            path: "opportunities",
+            children: [
+              {
+                index: true,
+                element: <ManageOpportunitiesPage />,
+              },
+              {
+                path: ":id",
+                element: <ManageDetailOpportunitiesLayout />,
                 children: [
                   {
                     path: ":tabId?",

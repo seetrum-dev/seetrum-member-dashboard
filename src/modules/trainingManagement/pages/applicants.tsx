@@ -260,7 +260,7 @@ export const ManageTrainingApplicants = () => {
       </Flex>
       <Typography textVariant="body-md">
         Showing {fisrtItemNumber} - {lastItemNumber} applicants of total{" "}
-        {applicants[trainingId].length} training applicants.
+        {applicants[trainingId].length} applicants.
       </Typography>
       <MantineReactTable
         columns={columns}
