@@ -131,7 +131,10 @@ const data: MainLinkProps[] = [
   {
     icon: <IconBriefcase size="20px" />,
     label: "Opportunities",
-    link: "/opportunities",
+    links: [
+      { label: "All opportunities", link: "/opportunities" },
+      { label: "My opportunities", link: "/myopportunities" },
+    ],
   },
   // Admin Links
   {
