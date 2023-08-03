@@ -5,8 +5,16 @@ import { IconChevronDown } from "@tabler/icons-react";
 import { useState } from "react";
 
 const sortOptions = {
-  "createdAt desc": { label: "Newest", orderBy: "createdAt", sortBy: "desc" },
-  "createdAt asc": { label: "Oldest", orderBy: "createdAt", sortBy: "asc" },
+  "scheduleDateTime desc": {
+    label: "Newest",
+    orderBy: "scheduleDateTime",
+    sortBy: "desc",
+  },
+  "scheduleDateTime asc": {
+    label: "Oldest",
+    orderBy: "scheduleDateTime",
+    sortBy: "asc",
+  },
   "title asc": { label: "Event title (A-Z)", orderBy: "title", sortBy: "asc" },
   "title desc": {
     label: "Event title (Z-A)",
@@ -20,7 +28,7 @@ type sortOption = keyof typeof sortOptions;
 export const SortMenu: React.FC<{
   onSortChanged: (value: [keyof ScheduledEvent, string]) => void;
 }> = ({ onSortChanged }) => {
-  const [sortBy, setSortBy] = useState<sortOption>("createdAt desc");
+  const [sortBy, setSortBy] = useState<sortOption>("scheduleDateTime desc");
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [sortByOps, setSortByOps] = useState<[keyof ScheduledEvent, string]>([
     "createdAt",
