@@ -54,6 +54,7 @@ export const OpportunitiesListPage = () => {
               .map((__o, id) => {
                 return (
                   <TrainingCard
+                    key={id}
                     loading
                     variant="horizontal"
                     {...trainingModelDummy}

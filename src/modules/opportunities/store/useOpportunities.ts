@@ -25,9 +25,13 @@ export const useOpportunities = create<OpportunitiesStore>((set, get) => ({
     const expiredAt = get().expiredAt;
     const today = new Date(Date.now());
     const isExpired = expiredAt === undefined || expiredAt < today;
-    if (!isExpired) return;
+    if (!isExpired) {
+      console.info("cache hit");
+      return;
+    }
 
     try {
+      console.info("cache missed");
       set({ loading: true });
       const unsortedOpportunities = await getAllOpportunities();
       const opportunities = sortTraining(

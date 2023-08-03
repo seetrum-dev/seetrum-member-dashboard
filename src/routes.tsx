@@ -28,6 +28,7 @@ import {
   applicationTrainingSupportDataLoader,
 } from "./ui/Layout/FormFillingLayout";
 import { OpportunitiesListPage } from "./modules/opportunities/pages/OpportunitiesListPage";
+import { OpportunityDetailPage } from "./modules/opportunities/pages/DetailPage";
 
 const Redirector = ({ path }: { path: string }) => {
   const navigate = useNavigate();
@@ -123,10 +124,10 @@ const ROUTES = {
             index: true,
             element: <OpportunitiesListPage />,
           },
-          // {
-          // path: ":id",
-          // element: <TrainingDetailPage />,
-          // },
+          {
+            path: ":id",
+            element: <OpportunityDetailPage />,
+          },
         ],
       },
       {
