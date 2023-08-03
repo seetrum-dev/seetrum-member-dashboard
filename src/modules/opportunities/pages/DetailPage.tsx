@@ -1,18 +1,20 @@
+import { useAuthStore } from "@/modules/auth/stores/authStore";
 import {
   TrainingDetailAttachments,
   TrainingDetailDescription,
   TrainingDetailHeader,
 } from "@/modules/trainings/pages/TrainingDetailPage";
 import { useFileURLStore } from "@/services/firebase/storage";
+import { FileScreeningCard } from "@/ui/Card/FileScreeningCard";
 import { IconArrowLeft } from "@/ui/Icons";
-import { Button, Flex, Image, Loader, Stack } from "@mantine/core";
-import { useNavigate, useParams } from "react-router-dom";
-import { useOpportunities } from "../store/useOpportunities";
-import { useEffect, useState } from "react";
-import { shallow } from "zustand/shallow";
 import { Typography } from "@/ui/Typography";
-import { ApplicationTrackingCard } from "@/modules/trainings/components/ApplicationTrackingCard";
-import { useAuthStore } from "@/modules/auth/stores/authStore";
+import { Button, Flex, Image, Loader, Stack } from "@mantine/core";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { shallow } from "zustand/shallow";
+import { useOpportunities } from "../store/useOpportunities";
+import { useOpportunitiesMember } from "../store/useOpportunitiesMember";
+import { ApplicationTracking } from "../components/ApplicationTracking";
 
 export const OpportunityDetailPage = () => {
   const { id: opportunityId } = useParams();
@@ -24,26 +26,35 @@ export const OpportunityDetailPage = () => {
   );
   const getOpportunities = useOpportunities((s) => s.getOpportunities);
   const applicant = useAuthStore((s) => s.user);
+  const { opportunitiesMember, loadingMember } = useOpportunitiesMember(
+    (s) => ({
+      opportunitiesMember: s.opportunitiesMember,
+      loadingMember: s.loading,
+    }),
+    shallow
+  );
+  const getOpportunitiesMember = useOpportunitiesMember(
+    (s) => s.getOpportunitiesMember
+  );
 
   const [imageUrl, setImage] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     getOpportunities();
-  }, [getOpportunities]);
+    if (applicant) getOpportunitiesMember(applicant.id);
+  }, [applicant]);
 
   const opportunityData = opportunities?.find((op) => op.id === opportunityId);
+  const memberData = opportunitiesMember?.find(
+    (member) => member.trainingId === opportunityId
+  );
 
   useEffect(() => {
     if (!imageUrl && opportunityData)
       getFileURL(opportunityData.thumbnailFileName).then((ur) => setImage(ur));
-  }, [
-    getFileURL,
-    opportunityData,
-    opportunityData?.thumbnailFileName,
-    imageUrl,
-  ]);
+  }, [imageUrl, opportunityData]);
 
-  if (!opportunityId || loading)
+  if (!opportunityId || loading || loadingMember)
     return (
       <Stack w="100%" h="min(400px, 50dvh)" justify="center" align="center">
         <Loader />
@@ -119,26 +130,28 @@ export const OpportunityDetailPage = () => {
               borderColor: t.fn.rgba(t.colors.night[6], 0.08),
             })}
           />
-          {/* <ApplicationTrackingCar{d {...tmData} />
-          {tmData?.issuedCertificate && (
-            <Stack
-              spacing={8}
-              p={16}
-              pt={20}
-              sx={(t) => ({
-                borderRadius: 16,
-                border: "1px solid",
-                borderColor: t.fn.rgba(t.colors.night[5], 0.12),
-              })}
-            >
-              <Typography textVariant="title-md" pb={8}>
-                Issued Certificate
-              </Typography>
-              {tmData.issuedCertificate.map((certif) => (
-                <FileScreeningCard {...certif} />
-              ))}
-            </Stack>
-          )}} */}
+          {<ApplicationTracking key={memberData?.id} {...memberData} />}
+          {memberData &&
+            Array.isArray(memberData.issuedCertificate) &&
+            memberData.issuedCertificate.length > 0 && (
+              <Stack
+                spacing={8}
+                p={16}
+                pt={20}
+                sx={(t) => ({
+                  borderRadius: 16,
+                  border: "1px solid",
+                  borderColor: t.fn.rgba(t.colors.night[5], 0.12),
+                })}
+              >
+                <Typography textVariant="title-md" pb={8}>
+                  Issued Certificate
+                </Typography>
+                {memberData.issuedCertificate.map((certif) => (
+                  <FileScreeningCard {...certif} />
+                ))}
+              </Stack>
+            )}
         </Flex>
       </Flex>
     </Stack>

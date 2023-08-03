@@ -51,7 +51,8 @@ export const MyOpportunitiesListPage = () => {
           <ApplicationStatusUpdate trainingId={oppt.id} />
         </TrainingCard>
       );
-    });
+    })
+    .filter((op) => op !== undefined);
 
   const isEmpty = opportunityList === undefined || opportunityList.length === 0;
   return (

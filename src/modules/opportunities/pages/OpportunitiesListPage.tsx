@@ -2,13 +2,13 @@ import { ProtectedPage } from "@/modules/auth/components/ProtectedPage";
 import { TrainingEmptyState } from "@/modules/trainings/components/EmptyState";
 import { TrainingCard } from "@/modules/trainings/components/TrainingCard";
 import { TrainingToolbar } from "@/modules/trainings/components/TrainingToolbar";
+import { trainingModelDummy } from "@/types/models/training";
 import { Typography } from "@/ui/Typography";
 import { Stack } from "@mantine/core";
-import { useEffect, useState } from "react";
-import { useOpportunities } from "../store/useOpportunities";
-import { shallow } from "zustand/shallow";
-import { trainingModelDummy } from "@/types/models/training";
 import { Timestamp } from "firebase/firestore";
+import { useEffect, useState } from "react";
+import { shallow } from "zustand/shallow";
+import { useOpportunities } from "../store/useOpportunities";
 
 export const OpportunitiesListPage = () => {
   const { opportunities, loading } = useOpportunities(
@@ -31,7 +31,16 @@ export const OpportunitiesListPage = () => {
         : true
     )
     .map((oppt) => {
-      return <TrainingCard key={oppt.id} variant="horizontal" {...oppt} />;
+      const isClosed = oppt.dueDate.seconds < Timestamp.now().seconds;
+      return (
+        <TrainingCard key={oppt.id} variant="horizontal" {...oppt}>
+          {isClosed && (
+            <Typography textVariant="body-md" color="dimmed">
+              No longer accepting applications
+            </Typography>
+          )}
+        </TrainingCard>
+      );
     });
 
   const isEmpty = opportunityList === undefined || opportunityList.length === 0;

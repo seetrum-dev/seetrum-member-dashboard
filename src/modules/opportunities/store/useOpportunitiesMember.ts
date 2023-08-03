@@ -1,4 +1,4 @@
-import { getOpportunityMemberByMemberId } from "@/modules/trainings/services/opportunityMemberService";
+import { getTrainingMemberByMemberId } from "@/modules/trainings/services/trainingMemberService";
 import { TrainingMember } from "@/types/models/trainingMember";
 import { create } from "zustand";
 
@@ -29,9 +29,7 @@ export const useOpportunitiesMember = create<OpportunitiesMemberStore>(
       try {
         console.info("cache missed");
         set({ loading: true });
-        const opportunitiesMember = await getOpportunityMemberByMemberId(
-          userId
-        );
+        const opportunitiesMember = await getTrainingMemberByMemberId(userId);
         const expiredTime = today;
         expiredTime.setSeconds(cacheTime);
         set({
