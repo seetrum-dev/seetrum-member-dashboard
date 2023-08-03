@@ -27,6 +27,7 @@ import {
   FormFillingLayout,
   applicationTrainingSupportDataLoader,
 } from "./ui/Layout/FormFillingLayout";
+import { OpportunitiesListPage } from "./modules/opportunities/pages/OpportunitiesListPage";
 
 const Redirector = ({ path }: { path: string }) => {
   const navigate = useNavigate();
@@ -113,6 +114,19 @@ const ROUTES = {
             path: ":id",
             element: <TrainingDetailPage />,
           },
+        ],
+      },
+      {
+        path: "opportunities",
+        children: [
+          {
+            index: true,
+            element: <OpportunitiesListPage />,
+          },
+          // {
+          // path: ":id",
+          // element: <TrainingDetailPage />,
+          // },
         ],
       },
       {
