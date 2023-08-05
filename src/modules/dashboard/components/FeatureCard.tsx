@@ -38,6 +38,7 @@ const features = [
     label: "opportunities",
     description:
       "Make a real impact by discovering project opportunities that align with your skills and interests, driving sustainable change.",
+    link: "/opportunities",
   },
 ];
 
