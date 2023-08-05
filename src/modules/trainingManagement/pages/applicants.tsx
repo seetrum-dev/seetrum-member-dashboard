@@ -95,6 +95,10 @@ export const ManageTrainingApplicants = () => {
             </Flex>
           </Stack>
         ),
+        sortingFn: (rowA, rowB) =>
+          rowA.original.name
+            .toLowerCase()
+            .localeCompare(rowB.original.name.toLowerCase()),
       },
       {
         header: "Status",
