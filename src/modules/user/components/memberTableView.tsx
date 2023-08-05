@@ -120,7 +120,7 @@ export const MembersTableView = () => {
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  navigate(props.row.getValue("id"));
+                  navigate(`../${tabId}/${props.row.original.id}`);
                   setActiveIndex(props.row.index);
                 }}
               >
@@ -132,7 +132,7 @@ export const MembersTableView = () => {
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [users, organization]
+    [users, organization, tabId]
   );
 
   const orgColumns = useMemo<MRT_ColumnDef<User>[]>(
