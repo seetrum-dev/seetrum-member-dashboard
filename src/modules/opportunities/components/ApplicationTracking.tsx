@@ -49,8 +49,8 @@ export const ApplicationTracking: React.FC<
       >
         <Typography textVariant="title-md">
           {!applicantData.id
-            ? "Interested in applying this training?"
-            : "Training Activity"}
+            ? "Interested in applying this opportunities?"
+            : "Opportunities Activity"}
         </Typography>
         {/* <ThemeIcon
           hidden={!Boolean(applicantData.id)}
