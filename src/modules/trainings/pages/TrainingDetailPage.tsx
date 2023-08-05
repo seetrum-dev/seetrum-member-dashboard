@@ -177,7 +177,7 @@ export const TrainingDetailHeader: React.FC<Training> = (trainignData) => {
     value,
   });
   const data = [
-    getData(<IconPeople />, "Trainer", trainignData.trainerName),
+    getData(<IconPeople />, "Organizer", trainignData.trainerName),
     getData(
       <IconCalendarEvent />,
       "Application deadline",

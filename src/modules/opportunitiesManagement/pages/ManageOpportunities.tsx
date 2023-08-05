@@ -1,5 +1,4 @@
 import { useOpportunities } from "@/modules/opportunities/store/useOpportunities";
-import { CreateTrainingModal } from "@/modules/trainings/components/CreateTrainingModal";
 import {
   AdminTrainingInfo,
   TrainingCard,
@@ -8,6 +7,7 @@ import { IconPlus } from "@/ui/Icons";
 import { Typography } from "@/ui/Typography";
 import { Button, Group, Skeleton, Stack } from "@mantine/core";
 import { useEffect, useState } from "react";
+import { CreateOpportunitiesModal } from "../components/CreateOpportunityModal";
 
 export const ManageOpportunitiesPage = () => {
   const [open, setOpen] = useState(false);
@@ -20,7 +20,7 @@ export const ManageOpportunitiesPage = () => {
 
   return (
     <Stack>
-      <CreateTrainingModal opened={open} onClose={() => setOpen(false)} />
+      <CreateOpportunitiesModal opened={open} onClose={() => setOpen(false)} />
       <Group position="apart">
         <Typography textVariant="headline-lg">Manage Opportunities</Typography>
         <Button onClick={() => setOpen(true)} leftIcon={<IconPlus size={18} />}>

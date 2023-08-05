@@ -8,6 +8,8 @@ interface OpportunitiesStore {
   getOpportunities: () => Promise<void>;
   setOpportunitiesSort: (sortBy: number, orderBy: number) => void;
 
+  invalidateCache: (dt?: Date) => void;
+
   expiredAt?: Date;
   loading?: boolean;
   error?: any;
@@ -59,5 +61,8 @@ export const useOpportunities = create<OpportunitiesStore>((set, get) => ({
 
     const newOrder = sortTraining(sortBy, orderBy, opportunities);
     set({ sortBy, orderBy, opportunities: newOrder });
+  },
+  invalidateCache(dt) {
+    set({ expiredAt: dt || new Date() });
   },
 }));
