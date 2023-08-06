@@ -177,7 +177,6 @@ export const MainLinks: React.FC<{ onNavigate: (path: string) => void }> = ({
     const toAdmin = Boolean(mode === "admin");
     if (adminMode && toAdmin) return;
 
-    console.log(pathname);
     const adminPathname = pathname === "/" ? "/members/individual" : pathname;
     // If the path is /admin, remove the /admin part
     var navigateTo = toAdmin

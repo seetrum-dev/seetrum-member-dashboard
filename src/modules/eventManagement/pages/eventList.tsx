@@ -134,7 +134,6 @@ export const EventManagementList = () => {
           isOpen={createEvent}
           onClose={() => setCreateEvent(false)}
           onDone={async (event) => {
-            console.log(1349, event);
             const newEvent = await createEventFn(event);
             setValidStatus(false);
             // got to the new event detail page

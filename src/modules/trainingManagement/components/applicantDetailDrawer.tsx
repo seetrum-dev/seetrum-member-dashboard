@@ -106,7 +106,6 @@ export const ApplicantDetails = () => {
               ]}
               placeholder="Application Status"
               onChange={async (val) => {
-                console.log("Change application status", val);
                 if (trainingId && activeApplicant && val) {
                   await updateTrainingMember(activeApplicant.id, {
                     status: val as TrainingMemberStatus,

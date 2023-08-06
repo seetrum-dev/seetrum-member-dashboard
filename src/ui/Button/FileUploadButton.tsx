@@ -64,7 +64,7 @@ export const FileUploadButton: React.FC<FileUploadButtonProps> = ({
       }
 
       const newFileInfo = await uploadFile(file, title);
-      console.log(newFileInfo);
+      // console.log(newFileInfo);
       onFileChange(newFileInfo);
       if (isImage) {
         setSrc("");

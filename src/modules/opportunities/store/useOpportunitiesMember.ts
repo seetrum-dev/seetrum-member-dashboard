@@ -21,13 +21,9 @@ export const useOpportunitiesMember = create<OpportunitiesMemberStore>(
       const expiredAt = get().expiredAt;
       const today = new Date(Date.now());
       const isExpired = expiredAt === undefined || expiredAt < today;
-      if (!isExpired && userId === get().userId) {
-        console.info("cache hit");
-        return;
-      }
+      if (!isExpired && userId === get().userId) return;
 
       try {
-        console.info("cache missed");
         set({ loading: true });
         const opportunitiesMember = await getTrainingMemberByMemberId(userId);
         const expiredTime = today;

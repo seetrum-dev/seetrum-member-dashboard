@@ -45,7 +45,6 @@ export const TrainingInfoEditor = ({
     [form.values.description]
   );
   useEffect(() => {
-    console.log("called");
     const updateTraining = async (tid: string) => {
       const t = await getTrainingsById(tid);
       if (t) {
@@ -65,8 +64,6 @@ export const TrainingInfoEditor = ({
   }, [id, getTrainingsById]);
 
   const handleSubmit = form.onSubmit((values) => {
-    console.log(values);
-    console.log(editor?.getHTML());
     onSubmit({
       title: values.title?.trim(),
       trainerName: values.trainerName?.trim(),
