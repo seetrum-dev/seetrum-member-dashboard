@@ -31,18 +31,19 @@ export const ProtectedPage: React.FC<Props> = ({ children }) => {
   const [user, isAdmin] = useAuthStore((state) => [state.user, state.isAdmin]);
   const loading = useAuthStore((state) => state.loading);
   const navigate = useNavigate();
-  const { pathname } = useLocation();
+  const location = useLocation();
 
   React.useEffect(() => {
+    const pathname = location.pathname;
     if (!user && !loading) {
       navigate(routePaths.SIGNIN, {
         state: {
-          redirectTo: pathname,
+          redirectTo: location,
         },
       });
     }
     if (user && !isAdmin && pathname.includes("/admin")) navigate("/");
-  }, [user, loading, pathname, isAdmin, navigate]);
+  }, [user, loading, location, isAdmin, navigate]);
 
   if (loading)
     return (

@@ -13,9 +13,9 @@ export const BackButton: React.FC<BackButtonProps & ButtonProps> = ({
   label,
   ...buttonProps
 }) => {
-  const { state } = useLocation();
+  const { state: locationState } = useLocation();
   return (
-    <Link to={to} state={state}>
+    <Link to={to} state={locationState}>
       <Button
         c="black"
         size="md"

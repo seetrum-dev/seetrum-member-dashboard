@@ -19,8 +19,8 @@ import { useMediaQuery } from "@mantine/hooks";
 export const LoginForm: React.FC = () => {
   const theme = useMantineTheme();
   const navigate = useNavigate();
-  const { state } = useLocation();
-  const { redirectTo } = state || {};
+  const { state: locationState } = useLocation();
+  const { redirectTo } = locationState || {};
   const isExtraSmallScreen = useMediaQuery(
     `(max-width: ${theme.breakpoints.xs})`
   );
@@ -46,7 +46,7 @@ export const LoginForm: React.FC = () => {
     const { email, password } = values;
     setLoading(true);
     await logIn(email, password);
-    if (redirectTo && redirectTo !== "/") navigate(redirectTo);
+    if (redirectTo !== undefined) navigate(redirectTo);
     setLoading(false);
   });
 

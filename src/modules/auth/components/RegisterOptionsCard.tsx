@@ -15,7 +15,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 
 export const RegisterOptionsCard: React.FC = () => {
   const theme = useMantineTheme();
-  const { state } = useLocation();
+  const { state: locationState } = useLocation();
   const isSmallScreen = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
   const isExtraSmallScreen = useMediaQuery(
     `(max-width: ${theme.breakpoints.xs})`
@@ -49,7 +49,7 @@ export const RegisterOptionsCard: React.FC = () => {
           align={isSmallScreen && !isExtraSmallScreen ? "center" : "left"}
         >
           Already have an account?{" "}
-          <Link to={routePaths.SIGNIN} state={state}>
+          <Link to={routePaths.SIGNIN} state={locationState}>
             <Anchor component="button">Sign in now</Anchor>
           </Link>
         </Typography>

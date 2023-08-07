@@ -67,7 +67,8 @@ export const RegisterForm: React.FC = () => {
       ? "organization"
       : "individual";
 
-  const { state } = useLocation();
+  const { state: locationState } = useLocation();
+  const { redirectTo } = locationState || {};
   const navigate = useNavigate();
   const isOrganization = userType === "organization";
   const registerInitialValue: RegisterFormData = {
@@ -187,8 +188,7 @@ export const RegisterForm: React.FC = () => {
       }
 
       await register(newUser as UserRegistrationData);
-      if (state.redirectTo && state.redirectTo !== "/")
-        navigate(state.redirectTo);
+      if (redirectTo) navigate(redirectTo);
     } catch (error) {}
     setLoading(true);
   });
