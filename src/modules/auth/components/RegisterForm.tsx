@@ -26,7 +26,7 @@ import {
 } from "@mantine/form";
 import { useMediaQuery } from "@mantine/hooks";
 import React from "react";
-import { useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuthStore } from "../stores/authStore";
 
 type OrganizationFlat = {
@@ -67,6 +67,8 @@ export const RegisterForm: React.FC = () => {
       ? "organization"
       : "individual";
 
+  const { state } = useLocation();
+  const navigate = useNavigate();
   const isOrganization = userType === "organization";
   const registerInitialValue: RegisterFormData = {
     name: "",
@@ -185,6 +187,8 @@ export const RegisterForm: React.FC = () => {
       }
 
       await register(newUser as UserRegistrationData);
+      if (state.redirectTo && state.redirectTo !== "/")
+        navigate(state.redirectTo);
     } catch (error) {}
     setLoading(true);
   });

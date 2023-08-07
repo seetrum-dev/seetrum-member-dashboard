@@ -12,12 +12,15 @@ import {
 } from "@mantine/core";
 import { hasLength, isEmail, useForm } from "@mantine/form";
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../stores/authStore";
 import { useMediaQuery } from "@mantine/hooks";
 
 export const LoginForm: React.FC = () => {
   const theme = useMantineTheme();
+  const navigate = useNavigate();
+  const { state } = useLocation();
+  const { redirectTo } = state || {};
   const isExtraSmallScreen = useMediaQuery(
     `(max-width: ${theme.breakpoints.xs})`
   );
@@ -43,6 +46,7 @@ export const LoginForm: React.FC = () => {
     const { email, password } = values;
     setLoading(true);
     await logIn(email, password);
+    if (redirectTo && redirectTo !== "/") navigate(redirectTo);
     setLoading(false);
   });
 
@@ -81,7 +85,7 @@ export const LoginForm: React.FC = () => {
             </Button>
             <Typography textVariant="body-md">
               Don&apos;t have an account yet?{" "}
-              <Link to={routePaths.REGISTER_OPTION}>
+              <Link to={routePaths.REGISTER_OPTION} state={{ redirectTo }}>
                 <Anchor component="button">Register now</Anchor>
               </Link>
             </Typography>

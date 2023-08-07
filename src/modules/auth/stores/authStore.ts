@@ -13,8 +13,8 @@ interface AuthState {
   isAdmin: boolean;
   loading: boolean;
   setUser: (user: User | null) => void;
-  register: (userRegisterData: UserRegistrationData) => void;
-  logIn: (email: string, password: string) => void;
+  register: (userRegisterData: UserRegistrationData) => Promise<void>;
+  logIn: (email: string, password: string) => Promise<void>;
   logInWithGoogle: () => void;
   logOut: () => void;
 }

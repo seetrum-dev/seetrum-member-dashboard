@@ -2,6 +2,7 @@ import { routePaths } from "@/routes";
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../stores/authStore";
+import { Loader, Stack } from "@mantine/core";
 
 export const withAuth = <P extends object>(
   OriginalComponent: React.ComponentType<P>
@@ -34,10 +35,21 @@ export const ProtectedPage: React.FC<Props> = ({ children }) => {
 
   React.useEffect(() => {
     if (!user && !loading) {
-      navigate(routePaths.SIGNIN);
+      navigate(routePaths.SIGNIN, {
+        state: {
+          redirectTo: pathname,
+        },
+      });
     }
     if (user && !isAdmin && pathname.includes("/admin")) navigate("/");
   }, [user, loading, pathname, isAdmin, navigate]);
+
+  if (loading)
+    return (
+      <Stack h="100dvh" w="100%" justify="center" align="center">
+        <Loader />
+      </Stack>
+    );
 
   return <>{children}</>;
 };
