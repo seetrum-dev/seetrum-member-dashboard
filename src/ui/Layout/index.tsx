@@ -146,7 +146,7 @@ export const ContactCard = () => {
         radius={"md"}
         target="_blank"
         sx={(theme) => ({ borderColor: theme.colors.gray[4] })}
-        href="https://wa.me/6285727055636"
+        href="https://wa.me/6285175016649"
       >
         <IconWhatsapp size={18} />
         <Typography px={8} textVariant="label-lg">
