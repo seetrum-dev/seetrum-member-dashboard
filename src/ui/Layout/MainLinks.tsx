@@ -35,6 +35,7 @@ const MainLink: React.FC<MainLinkProps> = ({
   onNavigate = (p) => {},
 }) => {
   const navigate = useNavigate();
+  const [isExpand, setExpand] = useState<boolean>(false);
 
   const handleNavigate = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
@@ -53,7 +54,10 @@ const MainLink: React.FC<MainLinkProps> = ({
     }
   };
   const location = useLocation();
-  const isActive = Boolean(link && location.pathname === link);
+  const isHome = link === "/";
+  const isActive = isHome
+    ? location.pathname === link
+    : Boolean(link && location.pathname.startsWith(link));
   const isChildActive = Boolean(
     links &&
       links
@@ -71,14 +75,15 @@ const MainLink: React.FC<MainLinkProps> = ({
     <NavLink
       key={label}
       label={label}
-      defaultOpened={(isChildActive && hasLinks) || false}
+      opened={(isChildActive && hasLinks) || isExpand}
+      defaultOpened={false}
       active={isActive}
       icon={
         <ThemeIcon color="biceblue.5" variant="outline" sx={{ border: "none" }}>
           {icon}
         </ThemeIcon>
       }
-      onClick={(e) => !links && handleNavigate(e, link)}
+      onClick={(e) => (!links ? handleNavigate(e, link) : setExpand(!isExpand))}
     >
       {hasLinks
         ? links.map((submenu, idx) => {
