@@ -73,6 +73,7 @@ const MainLink: React.FC<MainLinkProps> = ({
 
   return (
     <NavLink
+      mt={8}
       key={label}
       label={label}
       opened={(isChildActive && hasLinks) || isExpand}
@@ -204,7 +205,7 @@ export const MainLinks: React.FC<{ onNavigate: (path: string) => void }> = ({
   };
 
   return (
-    <Stack>
+    <Stack spacing={0}>
       {isAdmin && (
         <SegmentedControl
           color="primary"
