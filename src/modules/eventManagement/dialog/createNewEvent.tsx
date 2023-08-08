@@ -142,6 +142,7 @@ export const CreateNewEventDialog: React.FC<NewEventDialogProps> = ({
                   modalProps={{
                     withinPortal: true,
                   }}
+                  minDate={form.values.scheduleDateTime?.toDate() || undefined}
                   popoverProps={{
                     zIndex: 1000,
                   }}

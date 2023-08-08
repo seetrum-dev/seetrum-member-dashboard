@@ -9,32 +9,40 @@ import { createEvent, getAllScheduledEvents } from "../services/eventService";
 interface EventListStore {
   events?: ScheduledEvent[];
   getEvents: () => Promise<ScheduledEvent[]>;
-
   sortEvents: (orderBy: keyof ScheduledEvent, sortBy: "asc" | "desc") => void;
   createEvent: (event: CreateScheduledEventModel) => Promise<ScheduledEvent>;
-  isValid: boolean;
+  checkValidity(): boolean;
   loading: boolean;
+  expiredAt: number;
   setValidStatus: (val: boolean) => void;
 }
 
 export const useEventsList = create(
   devtools<EventListStore>((set, get) => ({
+    checkValidity: () => {
+      const now = Date.now();
+      const { events, expiredAt } = get();
+      return events !== undefined && now < expiredAt;
+    },
     isValid: false,
+    expiredAt: 0,
     loading: true,
     getEvents: async () => {
       set({ loading: true });
-      if (get().events && get().isValid) {
+      if (get().checkValidity()) {
         set({ loading: false });
         return get().events!;
       }
 
       const events = await getAllScheduledEvents();
-      set({ events, isValid: true, loading: false });
+      // expired in 5 minutes
+      const expiredAt = Date.now() + 5 * 60 * 1000;
+      set({ events, loading: false, expiredAt });
       return events;
     },
     async sortEvents(orderBy, sortBy) {
       const eventsList = get().events;
-      if (!eventsList || !get().isValid) {
+      if (!eventsList || !get().checkValidity()) {
         const evs = await get().getEvents();
         return set({ events: sortData(evs, orderBy, sortBy) });
       }
@@ -53,7 +61,6 @@ export const useEventsList = create(
         if (s.events)
           return {
             events: [...s.events, newEvent],
-            isValid: false,
             loading: false,
           };
         else return s;
@@ -61,7 +68,9 @@ export const useEventsList = create(
       return newEvent;
     },
     setValidStatus(val) {
-      set({ isValid: val });
+      if (!val) {
+        set({ expiredAt: Date.now() });
+      }
     },
   }))
 );

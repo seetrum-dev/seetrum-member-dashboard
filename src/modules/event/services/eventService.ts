@@ -3,6 +3,7 @@ import {
   addNewDocument,
   getAllDocuments,
   getDocumentById,
+  getDocumentsByQuery,
   updateDocument,
 } from "@/services/firebase/helper";
 import {
@@ -10,6 +11,7 @@ import {
   ScheduledEvent,
   ScheduledEventModel,
 } from "@/types/models/scheduledEvent";
+import { orderBy } from "firebase/firestore";
 
 export const createEvent = async (
   payload: CreateScheduledEventModel
@@ -37,7 +39,11 @@ export const createEventMaster = async (
 
 export const getAllScheduledEvents = async (): Promise<ScheduledEvent[]> => {
   try {
-    return await getAllDocuments<ScheduledEvent>(COLLECTION_EVENT);
+    // return await getAllDocuments<ScheduledEvent>(COLLECTION_EVENT);
+    return await getDocumentsByQuery<ScheduledEvent>(
+      COLLECTION_EVENT,
+      orderBy("scheduleDateTime", "desc")
+    );
   } catch (e) {
     throw e;
   }

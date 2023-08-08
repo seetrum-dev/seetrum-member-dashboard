@@ -195,14 +195,19 @@ const AddToCalendar: React.FC<{ isRegistered?: boolean }> = ({
         .replace(/[-:]/g, "")
         .replace(/\.\d{3}/g, "");
 
-    const endTime = event.scheduleDateTime.toDate();
-    endTime.setSeconds(3600 * 3);
+    let endTime;
+    if (event.scheduleEndDateTime) {
+      endTime = event.scheduleEndDateTime.toDate();
+    } else {
+      endTime = event.scheduleDateTime.toDate();
+      endTime.setSeconds(3600 * 3);
+    }
 
     const uri = new URL(
       `https://calendar.google.com/calendar/r/eventedit?&text=${
         event.title
       }&dates=${timeStampFormater(event.scheduleDateTime)}/${timeStampFormater(
-        Timestamp.fromDate(endTime) // TODO: change to end of event schedule date
+        Timestamp.fromDate(endTime)
       )}&details=${event.description}&ctz=${"Asia/Jakarta"}&location=${
         event.venue
       }&sf=true&output=xml`
@@ -238,7 +243,7 @@ const AddToCalendar: React.FC<{ isRegistered?: boolean }> = ({
           : "Interested in joining this event?"}
       </Typography>
       <Flex gap={16} wrap={"wrap"}>
-        {event?.whatsappLink && (
+        {isRegistered && event?.whatsappLink && (
           <Button
             radius={8}
             onClick={(e) => window.open(event.whatsappLink, "_blank")}

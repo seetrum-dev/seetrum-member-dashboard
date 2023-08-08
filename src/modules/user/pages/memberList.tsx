@@ -37,7 +37,7 @@ export const MemberListPage = () => {
           <TabBar data={tabData} />
         </Stack>
         <Stack sx={{ height: "100%" }}>
-          <Stack h="250vh">
+          <Stack>
             <Outlet />
           </Stack>
         </Stack>
