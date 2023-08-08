@@ -96,7 +96,7 @@ const ApplicationLogState: Record<TrainingMemberStatus, string> = {
   applied: "Application received",
 };
 // TODO: Implement history view with collapsible section
-const ApplicationHistory: React.FC<
+export const ApplicationHistory: React.FC<
   Partial<TrainingMember> & { isOpen: Boolean }
 > = ({ isOpen, ...applicantData }) => {
   return (

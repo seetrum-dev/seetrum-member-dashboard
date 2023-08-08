@@ -85,12 +85,12 @@ export const TrainingInfoViewer = ({
         </Button>
       </Flex>
       <Stack spacing={16}>
-        <Sections label="Training Title">
+        <Sections label="Title">
           {training && <Typography>{training.title}</Typography>}
         </Sections>
         <Divider />
         <SimpleGrid cols={2}>
-          <Sections label="Trainer">
+          <Sections label="Organizer">
             {training && training.trainerName ? (
               <Typography>{training.trainerName}</Typography>
             ) : undefined}

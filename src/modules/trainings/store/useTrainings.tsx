@@ -29,6 +29,7 @@ export const useTrainings = create<TrainingState>((set, get) => ({
       set({ loading: true });
       const trainingsList = await getAllTrainings();
       const tL = sortTraining(get().sortBy, get().orderBy, trainingsList);
+      console.table(tL);
       set({ trainings: tL, loading: false, error: null });
       return trainingsList;
     } catch (error) {
@@ -93,7 +94,7 @@ export const useTrainings = create<TrainingState>((set, get) => ({
   },
 }));
 
-const sortTraining = (
+export const sortTraining = (
   sortBy: number,
   orderBy: number,
   trainings: Training[]

@@ -47,8 +47,8 @@ export const ManageTrainingSettingPage = () => {
         </Typography>
         <Typography textVariant="body-md" color="dimmed">
           This section allows you to manage and customize additional questions
-          for the training application form, providing flexibility and control
-          over the information collected.
+          for the application form, providing flexibility and control over the
+          information collected.
         </Typography>
       </Stack>
       <AdditionalQuestionForm

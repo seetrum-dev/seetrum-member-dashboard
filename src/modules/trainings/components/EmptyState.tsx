@@ -32,6 +32,18 @@ const contents = {
     description:
       "Stay tuned for upcoming trainings on energy efficiency. Our team is working diligently to curate valuable training opportunities. Check back soon for updates.",
   },
+  opportunityNotFound: {
+    image: notFoundUrl,
+    title: "Not Found",
+    description:
+      "We couldn't find any opportunities that match your search criteria. Expand your search or check back later for new opportunities.",
+  },
+  opportunityEmpty: {
+    image: comingSoonUrl,
+    title: "No Opportunities Available",
+    description:
+      "Stay tuned for upcoming opportunities on energy efficiency. Our team is working diligently to curate valuable opportunities. Check back soon for updates.",
+  },
 };
 
 type variants = keyof typeof contents;

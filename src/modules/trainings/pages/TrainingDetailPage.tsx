@@ -116,9 +116,9 @@ export const TrainingDetailPage: React.FC = () => {
         })}
       >
         <Flex direction="column" gap={24} sx={{ maxWidth: 640 }}>
-          <Header {...trainingData} />
-          <Description {...trainingData} />
-          <Attachments attachments={trainingData.attachments} />
+          <TrainingDetailHeader {...trainingData} />
+          <TrainingDetailDescription {...trainingData} />
+          <TrainingDetailAttachments attachments={trainingData.attachments} />
         </Flex>
         <Flex
           sx={(t) => ({
@@ -170,14 +170,14 @@ export const TrainingDetailPage: React.FC = () => {
   );
 };
 
-const Header: React.FC<Training> = (trainignData) => {
+export const TrainingDetailHeader: React.FC<Training> = (trainignData) => {
   const getData = (icon: React.ReactNode, label: string, value: string) => ({
     icon,
     label,
     value,
   });
   const data = [
-    getData(<IconPeople />, "Trainer", trainignData.trainerName),
+    getData(<IconPeople />, "Organizer", trainignData.trainerName),
     getData(
       <IconCalendarEvent />,
       "Application deadline",
@@ -242,7 +242,7 @@ const Header: React.FC<Training> = (trainignData) => {
   );
 };
 
-const Description: React.FC<Training> = (trainignData) => {
+export const TrainingDetailDescription: React.FC<Training> = (trainignData) => {
   return (
     <Flex direction={"column"} gap={16}>
       <Typography textVariant="title-md">Description</Typography>
@@ -254,9 +254,9 @@ const Description: React.FC<Training> = (trainignData) => {
   );
 };
 
-const Attachments: React.FC<{ attachments: FileInfo[] }> = ({
-  attachments,
-}) => {
+export const TrainingDetailAttachments: React.FC<{
+  attachments: FileInfo[];
+}> = ({ attachments }) => {
   return (
     <Flex direction="column" gap={16}>
       <Typography textVariant="title-md">Supporting Files</Typography>

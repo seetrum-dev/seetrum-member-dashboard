@@ -95,6 +95,10 @@ export const ManageTrainingApplicants = () => {
             </Flex>
           </Stack>
         ),
+        sortingFn: (rowA, rowB) =>
+          rowA.original.name
+            .toLowerCase()
+            .localeCompare(rowB.original.name.toLowerCase()),
       },
       {
         header: "Status",
@@ -260,7 +264,7 @@ export const ManageTrainingApplicants = () => {
       </Flex>
       <Typography textVariant="body-md">
         Showing {fisrtItemNumber} - {lastItemNumber} applicants of total{" "}
-        {applicants[trainingId].length} training applicants.
+        {applicants[trainingId].length} applicants.
       </Typography>
       <MantineReactTable
         columns={columns}

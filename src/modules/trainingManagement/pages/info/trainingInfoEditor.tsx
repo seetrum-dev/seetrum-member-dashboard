@@ -108,10 +108,10 @@ export const TrainingInfoEditor = ({
         <TextInput
           label={
             <Typography textVariant="title-md" mb={4}>
-              Training Title
+              Title
             </Typography>
           }
-          placeholder="Training Title"
+          placeholder="Title"
           maw="min(430px, 100%)"
           radius={8}
           {...form.getInputProps("title")}
@@ -119,10 +119,10 @@ export const TrainingInfoEditor = ({
         <TextInput
           label={
             <Typography textVariant="title-md" mb={4}>
-              Trainer
+              Organizer
             </Typography>
           }
-          placeholder="Input trainer"
+          placeholder="Input organizer"
           maw="min(430px, 100%)"
           radius={8}
           {...form.getInputProps("trainerName")}
