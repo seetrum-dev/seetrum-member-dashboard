@@ -1,5 +1,5 @@
 import { Button, ButtonProps } from "@mantine/core";
-import { Link, To } from "react-router-dom";
+import { Link, To, useLocation } from "react-router-dom";
 import { IconArrowLeft } from "../Icons";
 import { ReactNode } from "react";
 
@@ -13,8 +13,9 @@ export const BackButton: React.FC<BackButtonProps & ButtonProps> = ({
   label,
   ...buttonProps
 }) => {
+  const { state: locationState } = useLocation();
   return (
-    <Link to={to}>
+    <Link to={to} state={locationState}>
       <Button
         c="black"
         size="md"

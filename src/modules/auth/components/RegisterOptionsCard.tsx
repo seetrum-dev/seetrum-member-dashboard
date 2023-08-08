@@ -11,10 +11,11 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 export const RegisterOptionsCard: React.FC = () => {
   const theme = useMantineTheme();
+  const { state: locationState } = useLocation();
   const isSmallScreen = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
   const isExtraSmallScreen = useMediaQuery(
     `(max-width: ${theme.breakpoints.xs})`
@@ -48,7 +49,7 @@ export const RegisterOptionsCard: React.FC = () => {
           align={isSmallScreen && !isExtraSmallScreen ? "center" : "left"}
         >
           Already have an account?{" "}
-          <Link to={routePaths.SIGNIN}>
+          <Link to={routePaths.SIGNIN} state={locationState}>
             <Anchor component="button">Sign in now</Anchor>
           </Link>
         </Typography>
@@ -86,6 +87,7 @@ interface Props {
 
 const RegisterCard: React.FC<Props> = ({ userType }) => {
   const navigate = useNavigate();
+  const { state } = useLocation();
   const registerCopy = {
     individual: {
       logo: <IconPerson />,
@@ -105,7 +107,7 @@ const RegisterCard: React.FC<Props> = ({ userType }) => {
 
   const { title, description, linkTo, logo } = registerCopy[userType];
   const handleClick = () => {
-    navigate(linkTo);
+    navigate(linkTo, { state });
   };
   return (
     <Paper
