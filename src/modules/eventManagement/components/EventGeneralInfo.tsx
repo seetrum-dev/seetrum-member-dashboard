@@ -1,4 +1,4 @@
-import { displayEventDate, kLineClamp } from "@/lib/utils";
+import { displayEventDate, extractContent, kLineClamp } from "@/lib/utils";
 import { updateScheduledEvent } from "@/modules/event/services/eventService";
 import { useEventDetail } from "@/modules/event/store/useEventDetail";
 import { useEventsList } from "@/modules/event/store/useEventList";
@@ -197,13 +197,26 @@ const GeneralInfoViewer = ({ event }: { event?: ScheduledEvent }) => {
       <Divider />
       <Stack>
         <Typography variant="title-md">Description</Typography>
-        {event ? (
-          <TypographyStylesProvider>
-            <Box
-              component="div"
-              dangerouslySetInnerHTML={{ __html: event?.description || "-" }}
-            />
-          </TypographyStylesProvider>
+        {event !== undefined ? (
+          <>
+            <TypographyStylesProvider>
+              {extractContent(event.description).trim() === "" ? (
+                <Typography
+                  textVariant="body-sm"
+                  color="dimmed"
+                  align="center"
+                  my={16}
+                >
+                  <i>No description available</i>
+                </Typography>
+              ) : (
+                <Box
+                  component="div"
+                  dangerouslySetInnerHTML={{ __html: event.description }}
+                />
+              )}
+            </TypographyStylesProvider>
+          </>
         ) : (
           <Stack h={100} w="100%" justify="center" align="center">
             <Loader />
