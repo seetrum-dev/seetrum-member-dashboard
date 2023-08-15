@@ -105,7 +105,7 @@ export const TrainingInfoViewer = ({
         <Sections
           label="Description"
           loading={
-            !Boolean(training?.description) ? (
+            training?.description === undefined ? (
               <Loader py={32} w="100%" px="auto" />
             ) : (
               false
@@ -113,9 +113,23 @@ export const TrainingInfoViewer = ({
           }
         >
           <TypographyStylesProvider>
-            <Box
-              dangerouslySetInnerHTML={{ __html: training?.description ?? "" }}
-            />
+            {training?.description === "" ||
+            training?.description.trim().toLowerCase().startsWith("<p></p>") ? (
+              <Typography
+                textVariant="body-md"
+                color="dimmed"
+                align="center"
+                my={16}
+              >
+                <i>No description available</i>
+              </Typography>
+            ) : (
+              <Box
+                dangerouslySetInnerHTML={{
+                  __html: training?.description ?? "",
+                }}
+              />
+            )}
           </TypographyStylesProvider>
         </Sections>
       </Stack>
