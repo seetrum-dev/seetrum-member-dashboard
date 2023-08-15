@@ -1,8 +1,6 @@
-import { DEFAULT_TITLE } from "@/lib/constants";
 import { ProtectedPage } from "@/modules/auth/components/ProtectedPage";
 import { Typography } from "@/ui/Typography";
 import { Button, Flex } from "@mantine/core";
-import { useDocumentTitle } from "@mantine/hooks";
 import React, { useState } from "react";
 import { MyTrainingFilter } from "../components/MyTrainingFilter";
 import {
@@ -23,7 +21,6 @@ export const TrainingsPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const myTrainings = Boolean(location.pathname.includes("mytrainings"));
-  useDocumentTitle(`${DEFAULT_TITLE} | ${myTrainings ? "My" : ""} Trainings`);
   const loading = useTrainings((state) => state.loading);
   const trainings = useTrainings((state) => state.trainings);
   const getTrainings = useTrainings((state) => state.getTrainings);
