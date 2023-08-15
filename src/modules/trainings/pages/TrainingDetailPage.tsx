@@ -115,7 +115,7 @@ export const TrainingDetailPage: React.FC = () => {
           [t.fn.smallerThan("sm")]: { flexDirection: "column" },
         })}
       >
-        <Flex direction="column" gap={24} sx={{ maxWidth: 640 }}>
+        <Flex direction="column" gap={24} sx={{ maxWidth: 640, flex: 1 }}>
           <TrainingDetailHeader {...trainingData} />
           <TrainingDetailDescription {...trainingData} />
           <TrainingDetailAttachments attachments={trainingData.attachments} />
@@ -257,6 +257,10 @@ export const TrainingDetailDescription: React.FC<Training> = (trainignData) => {
 export const TrainingDetailAttachments: React.FC<{
   attachments: FileInfo[];
 }> = ({ attachments }) => {
+  const isEmpty: boolean = attachments && attachments.length === 0;
+
+  if (isEmpty) return <></>;
+
   return (
     <Flex direction="column" gap={16}>
       <Typography textVariant="title-md">Supporting Files</Typography>
