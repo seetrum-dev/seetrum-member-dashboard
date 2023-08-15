@@ -243,13 +243,21 @@ export const TrainingDetailHeader: React.FC<Training> = (trainignData) => {
 };
 
 export const TrainingDetailDescription: React.FC<Training> = (trainignData) => {
+  const isEmpty =
+    trainignData.description.trim().startsWith("<p></p>") ||
+    trainignData.description === "";
   return (
     <Flex direction={"column"} gap={16}>
       <Typography textVariant="title-md">Description</Typography>
-      {/* TODO: Update to support rich text format */}
-      <TypographyStylesProvider>
-        <Box dangerouslySetInnerHTML={{ __html: trainignData.description }} />
-      </TypographyStylesProvider>
+      {isEmpty ? (
+        <Typography textVariant="body-md" my={16} align="center" color="dimmed">
+          <i>No description available</i>
+        </Typography>
+      ) : (
+        <TypographyStylesProvider>
+          <Box dangerouslySetInnerHTML={{ __html: trainignData.description }} />
+        </TypographyStylesProvider>
+      )}
     </Flex>
   );
 };
