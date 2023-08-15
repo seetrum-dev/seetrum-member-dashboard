@@ -145,25 +145,27 @@ export const TrainingDetailPage: React.FC = () => {
             })}
           />
           <ApplicationTrackingCard {...tmData} />
-          {tmData?.issuedCertificate && (
-            <Stack
-              spacing={8}
-              p={16}
-              pt={20}
-              sx={(t) => ({
-                borderRadius: 16,
-                border: "1px solid",
-                borderColor: t.fn.rgba(t.colors.night[5], 0.12),
-              })}
-            >
-              <Typography textVariant="title-md" pb={8}>
-                Issued Certificate
-              </Typography>
-              {tmData.issuedCertificate.map((certif) => (
-                <FileScreeningCard {...certif} />
-              ))}
-            </Stack>
-          )}
+          {tmData &&
+            Array.isArray(tmData.issuedCertificate) &&
+            tmData.issuedCertificate.length > 0 && (
+              <Stack
+                spacing={8}
+                p={16}
+                pt={20}
+                sx={(t) => ({
+                  borderRadius: 16,
+                  border: "1px solid",
+                  borderColor: t.fn.rgba(t.colors.night[5], 0.12),
+                })}
+              >
+                <Typography textVariant="title-md" pb={8}>
+                  Issued Certificate
+                </Typography>
+                {tmData.issuedCertificate.map((certif) => (
+                  <FileScreeningCard {...certif} />
+                ))}
+              </Stack>
+            )}
         </Flex>
       </Flex>
     </Flex>
