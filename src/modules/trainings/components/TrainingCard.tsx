@@ -262,7 +262,7 @@ const VerticalCard: React.FC<Training & TrainingCardChildProps> = ({
           navigate(`/trainings/${id}`);
         }}
       >
-        View training details
+        View details
       </Button>
     </Flex>
   );

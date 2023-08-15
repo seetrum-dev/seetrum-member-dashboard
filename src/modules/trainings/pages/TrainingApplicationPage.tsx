@@ -8,7 +8,7 @@ import { showErrorNotif } from "@/ui/notifications";
 import { Button, Center, Container, Flex, Footer, Loader } from "@mantine/core";
 import { isEmail, isNotEmpty, useForm } from "@mantine/form";
 import { useEffect, useState } from "react";
-import { useNavigate, useOutletContext } from "react-router-dom";
+import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 import { createTrainingMember } from "../services/trainingMemberService";
 import { useTrainingMember } from "../store/useTrainingMember";
 import { ApplicationForm } from "../components/ApplicationForm";
@@ -28,9 +28,12 @@ export const TrainingApplicationPage: React.FC = () => {
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
   const loadingUser = useAuthStore((state) => state.loading);
-  const { addTrainingMember, getTrainingMemberByMemberId } =
-    useTrainingMember();
+  const addTrainingMember = useTrainingMember((s) => s.addTrainingMember);
+  const getTrainingMemberByMemberId = useTrainingMember(
+    (s) => s.getTrainingMemberByMemberId
+  );
   const [loading, setLoading] = useState(false);
+  const { trainingsTypes } = useParams();
 
   const form = useForm<TrainingMemberModel>({
     initialValues: {
@@ -113,7 +116,7 @@ export const TrainingApplicationPage: React.FC = () => {
       const newTrainingMember = await createTrainingMember(applicant);
       addTrainingMember(newTrainingMember);
       user && (await getTrainingMemberByMemberId(user.id));
-      navigate("/mytrainings");
+      navigate(`/my${trainingsTypes}`);
     } catch (error) {
       console.error(error);
 

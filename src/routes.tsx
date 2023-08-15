@@ -249,7 +249,7 @@ const ROUTES = {
     ],
   },
   TRAINING_APPLICATION: {
-    path: "trainings/:id/apply",
+    path: ":trainingsTypes/:id/apply",
     loader: applicationTrainingSupportDataLoader,
     element: <FormFillingLayout />,
     children: [
