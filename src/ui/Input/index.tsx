@@ -1,5 +1,6 @@
 import { FormMeta } from "@/types/models/inputMeta";
 import { Select, TextInput } from "@mantine/core";
+export * from "./RichTextEditorField";
 
 export interface FormMetaProps {
   meta: FormMeta;
