@@ -8,7 +8,7 @@ interface MyTrainingFilterProps {
 }
 
 const filterOptions: { value: TrainingMemberStatus | ""; label: string }[] = [
-  { value: "", label: "All my trainings" },
+  { value: "", label: "All status" },
   { value: "applied", label: "Applied" },
   { value: "accepted", label: "Accepted" },
   { value: "completed", label: "Completed" },
