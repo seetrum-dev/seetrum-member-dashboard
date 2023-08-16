@@ -1,4 +1,4 @@
-import { isMeetingLink, pretyDateTime } from "@/lib/utils";
+import { extractContent, isMeetingLink, pretyDateTime } from "@/lib/utils";
 import { ProtectedPage } from "@/modules/auth/components/ProtectedPage";
 import { useFileURLStore } from "@/services/firebase/storage";
 import { BackButton } from "@/ui/Button";
@@ -121,11 +121,22 @@ export const EventDetailPage: React.FC = () => {
               <Typography textVariant="label-lg">Description</Typography>
               <TypographyStylesProvider>
                 {event ? (
-                  <Box
-                    dangerouslySetInnerHTML={{
-                      __html: event?.description || "",
-                    }}
-                  />
+                  extractContent(event.description).trim() === "" ? (
+                    <Typography
+                      textVariant="body-sm"
+                      color="dimmed"
+                      my={24}
+                      mx={24}
+                    >
+                      <i>No description available</i>
+                    </Typography>
+                  ) : (
+                    <Box
+                      dangerouslySetInnerHTML={{
+                        __html: event?.description || "",
+                      }}
+                    />
+                  )
                 ) : (
                   <Stack>
                     <Skeleton width="90%" height={18} />

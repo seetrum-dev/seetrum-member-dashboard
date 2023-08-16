@@ -1,7 +1,7 @@
 import { DEFAULT_TITLE } from "@/lib/constants";
 import { Header } from "../Header";
 
-import { extractInitials } from "@/lib/utils";
+import { extractInitials, toTitleCase } from "@/lib/utils";
 import { useAuthStore } from "@/modules/auth/stores/authStore";
 import {
   AppShell,
@@ -20,10 +20,25 @@ import React from "react";
 import { IconChevronRight, IconWhatsapp } from "../Icons";
 import { Typography } from "../Typography";
 import { MainLinks } from "./MainLinks";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { ProtectedPage } from "@/modules/auth/components/ProtectedPage";
+import { useDocumentTitle } from "@mantine/hooks";
 
-export const MainLayout = ({ title = DEFAULT_TITLE }) => {
+export const MainLayout = () => {
+  const { pathname } = useLocation();
+  const title =
+    pathname.match(/^(\/admin)?\/(my)?(\w+)\/?/) ||
+    `Member Seetrum | ${DEFAULT_TITLE}`;
+  const isAdmin = typeof title !== "string" && Boolean(title[1]);
+  const myPage = typeof title !== "string" && title[2];
+  const pageName = typeof title !== "string" && title[3];
+  useDocumentTitle(
+    typeof title === "string"
+      ? title
+      : `${isAdmin ? "Admin" : "Member"} Seetrum | ${
+          myPage ? "My " : ""
+        }${toTitleCase(pageName || "")}`
+  );
   const [opened, setOpened] = React.useState(false);
 
   return (
@@ -146,7 +161,7 @@ export const ContactCard = () => {
         radius={"md"}
         target="_blank"
         sx={(theme) => ({ borderColor: theme.colors.gray[4] })}
-        href="https://wa.me/6285727055636"
+        href="https://wa.me/6285175016649"
       >
         <IconWhatsapp size={18} />
         <Typography px={8} textVariant="label-lg">

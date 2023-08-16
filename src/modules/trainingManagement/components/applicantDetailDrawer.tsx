@@ -106,7 +106,6 @@ export const ApplicantDetails = () => {
               ]}
               placeholder="Application Status"
               onChange={async (val) => {
-                console.log("Change application status", val);
                 if (trainingId && activeApplicant && val) {
                   await updateTrainingMember(activeApplicant.id, {
                     status: val as TrainingMemberStatus,
@@ -122,8 +121,13 @@ export const ApplicantDetails = () => {
         </Drawer.Title>
         <Drawer.CloseButton />
       </Drawer.Header>
-      <Drawer.Body mih={"95vh"} pb={0} px={0} sx={{ gap: 0 }}>
-        <Stack pb={80} pt={16} px={16}>
+      <Drawer.Body
+        mih={"100%"}
+        pb={0}
+        px={0}
+        sx={{ display: "flex", flexDirection: "column", gap: 0 }}
+      >
+        <Stack pb={80} pt={16} px={16} sx={{ flex: 1 }}>
           <Typography textVariant="title-md">Applicant Information</Typography>
           <Flex gap={16} align={"center"}>
             <Avatar size={64} radius={64} color="cyan">
@@ -167,16 +171,24 @@ export const ApplicantDetails = () => {
               })}
             </>
           )}
-          <Divider />
-          <Typography textVariant="title-md">Uploaded Files</Typography>
-          <Stack spacing={16}>
-            {activeApplicant &&
-              activeApplicant.requiredFiles.map((file) => {
-                return (
-                  <FileScreeningCard key={file.filename} {...file} showTag />
-                );
-              })}
-          </Stack>
+          {activeApplicant && activeApplicant.requiredFiles.length > 0 && (
+            <>
+              <Divider />
+              <Typography textVariant="title-md">Uploaded Files</Typography>
+              <Stack spacing={16}>
+                {activeApplicant &&
+                  activeApplicant.requiredFiles.map((file) => {
+                    return (
+                      <FileScreeningCard
+                        key={file.filename}
+                        {...file}
+                        showTag
+                      />
+                    );
+                  })}
+              </Stack>
+            </>
+          )}
           <Divider />
           <Typography textVariant="title-md">Certificate</Typography>
           <Typography textVariant="body-md">

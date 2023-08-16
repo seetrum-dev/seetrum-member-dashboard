@@ -17,7 +17,7 @@ import { useNavigate } from "react-router-dom";
 import { getTrainingMemberCountByTrainingId } from "../services/trainingMemberService";
 import { useTrainings } from "../store/useTrainings";
 import { Timestamp } from "firebase/firestore";
-import { pretyDate } from "@/lib/utils";
+import { kLineClamp, pretyDate } from "@/lib/utils";
 import { useTrainingMember } from "../store/useTrainingMember";
 import { useAuthStore } from "@/modules/auth/stores/authStore";
 import { TrainingMember } from "@/types/models/trainingMember";
@@ -79,8 +79,8 @@ export const TrainingCard: React.FC<
               minWidth: 210,
               maxWidth: 210,
               flexShrink: 0,
-              [t.fn.smallerThan("sm")]: {
-                maxWidth: "45%",
+              [t.fn.smallerThan("xs")]: {
+                maxWidth: "100%",
                 ".mantine-Image-imageWrapper img": {
                   maxWidth: "100%",
                   objectPosition: "50% 50%",
@@ -111,6 +111,9 @@ const HorizontalCard: React.FC<Training & TrainingCardChildProps> = ({
         borderBottom: "1px solid",
         borderColor: theme.colors.gray[4],
         cursor: "pointer",
+        [theme.fn.smallerThan("xs")]: {
+          flexDirection: "column",
+        },
       })}
       onClick={(e) => {
         e.preventDefault();
@@ -126,13 +129,7 @@ const HorizontalCard: React.FC<Training & TrainingCardChildProps> = ({
           <Typography
             textVariant="title-md"
             sx={{
-              // TODO: This should be refactored to somewhere accessible
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              display: "-webkit-box",
-              WebkitBoxOrient: "vertical",
-              WebkitLineClamp: 2,
-              // ---
+              ...kLineClamp(2),
             }}
           >
             {trainingData.title}
@@ -265,7 +262,7 @@ const VerticalCard: React.FC<Training & TrainingCardChildProps> = ({
           navigate(`/trainings/${id}`);
         }}
       >
-        View training details
+        View details
       </Button>
     </Flex>
   );

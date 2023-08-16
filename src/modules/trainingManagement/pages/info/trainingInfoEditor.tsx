@@ -1,11 +1,12 @@
 import { useTrainings } from "@/modules/trainings/store/useTrainings";
 import { Training, TrainingModel } from "@/types/models/training";
 import { IconCalendar } from "@/ui/Icons";
+import { RichTextEditorField } from "@/ui/Input";
 import { Typography } from "@/ui/Typography";
 import { Button, Flex, Stack, TextInput, useMantineTheme } from "@mantine/core";
 import { DatePickerInput } from "@mantine/dates";
 import { isNotEmpty, useForm } from "@mantine/form";
-import { Link, RichTextEditor } from "@mantine/tiptap";
+import { Link } from "@mantine/tiptap";
 import { useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { Timestamp } from "firebase/firestore";
@@ -45,7 +46,6 @@ export const TrainingInfoEditor = ({
     [form.values.description]
   );
   useEffect(() => {
-    console.log("called");
     const updateTraining = async (tid: string) => {
       const t = await getTrainingsById(tid);
       if (t) {
@@ -65,8 +65,6 @@ export const TrainingInfoEditor = ({
   }, [id, getTrainingsById]);
 
   const handleSubmit = form.onSubmit((values) => {
-    console.log(values);
-    console.log(editor?.getHTML());
     onSubmit({
       title: values.title?.trim(),
       trainerName: values.trainerName?.trim(),
@@ -152,43 +150,7 @@ export const TrainingInfoEditor = ({
           <Typography textVariant="title-md" mb={4}>
             Description
           </Typography>
-          <RichTextEditor editor={editor} sx={{ borderRadius: 8 }}>
-            <RichTextEditor.Toolbar
-              sx={{ borderTopLeftRadius: 8, borderTopRightRadius: 8 }}
-              sticky
-              stickyOffset={60}
-            >
-              <RichTextEditor.ControlsGroup>
-                <RichTextEditor.Bold />
-                <RichTextEditor.Italic />
-                <RichTextEditor.Strikethrough />
-                <RichTextEditor.ClearFormatting />
-              </RichTextEditor.ControlsGroup>
-
-              <RichTextEditor.ControlsGroup>
-                <RichTextEditor.H1 />
-                <RichTextEditor.H2 />
-                <RichTextEditor.H3 />
-                <RichTextEditor.H4 />
-                <RichTextEditor.H5 />
-                <RichTextEditor.H6 />
-              </RichTextEditor.ControlsGroup>
-
-              <RichTextEditor.ControlsGroup>
-                <RichTextEditor.Blockquote />
-                <RichTextEditor.Hr />
-                <RichTextEditor.BulletList />
-                <RichTextEditor.OrderedList />
-              </RichTextEditor.ControlsGroup>
-
-              <RichTextEditor.ControlsGroup>
-                <RichTextEditor.Link />
-                <RichTextEditor.Unlink />
-              </RichTextEditor.ControlsGroup>
-            </RichTextEditor.Toolbar>
-
-            <RichTextEditor.Content sx={{ borderRadius: 8 }} />
-          </RichTextEditor>
+          <RichTextEditorField editor={editor} />
         </Stack>
       </Stack>
     </Stack>

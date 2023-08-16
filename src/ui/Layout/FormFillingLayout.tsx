@@ -11,11 +11,17 @@ import {
   useMantineTheme,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
-import { LoaderFunctionArgs, Outlet, useLoaderData } from "react-router-dom";
+import {
+  LoaderFunctionArgs,
+  Outlet,
+  useLoaderData,
+  useParams,
+} from "react-router-dom";
 import { Header } from "../Header";
 import { Typography } from "../Typography";
 import { Training } from "@/types/models/training";
 import { getTrainingById } from "@/modules/trainings/services/trainingService";
+import { toTitleCase } from "@/lib/utils";
 
 const ALL_STEPS = [
   {
@@ -52,6 +58,7 @@ export const FormFillingLayout = () => {
   const [steps, setSteps] = useState(ALL_STEPS);
   const theme = useMantineTheme();
   const training = useLoaderData() as Training;
+  const { trainingsTypes } = useParams();
 
   useEffect(() => {
     if (!training.formMetas) {
@@ -74,7 +81,7 @@ export const FormFillingLayout = () => {
             }}
           >
             <Typography textVariant="headline-lg">
-              Training Application Form
+              {toTitleCase(trainingsTypes || "Training")} Application Form
             </Typography>
             <Flex gap={24} justify={"space-between"}>
               <Flex direction="column" gap={24} pb={80}>

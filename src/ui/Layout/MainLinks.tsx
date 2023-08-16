@@ -35,6 +35,7 @@ const MainLink: React.FC<MainLinkProps> = ({
   onNavigate = (p) => {},
 }) => {
   const navigate = useNavigate();
+  const [isExpand, setExpand] = useState<boolean>(false);
 
   const handleNavigate = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
@@ -53,7 +54,10 @@ const MainLink: React.FC<MainLinkProps> = ({
     }
   };
   const location = useLocation();
-  const isActive = Boolean(link && location.pathname === link);
+  const isHome = link === "/";
+  const isActive = isHome
+    ? location.pathname === link
+    : Boolean(link && location.pathname.startsWith(link));
   const isChildActive = Boolean(
     links &&
       links
@@ -69,16 +73,18 @@ const MainLink: React.FC<MainLinkProps> = ({
 
   return (
     <NavLink
+      mt={8}
       key={label}
       label={label}
-      defaultOpened={(isChildActive && hasLinks) || false}
+      opened={(isChildActive && hasLinks) || isExpand}
+      defaultOpened={false}
       active={isActive}
       icon={
         <ThemeIcon color="biceblue.5" variant="outline" sx={{ border: "none" }}>
           {icon}
         </ThemeIcon>
       }
-      onClick={(e) => !links && handleNavigate(e, link)}
+      onClick={(e) => (!links ? handleNavigate(e, link) : setExpand(!isExpand))}
     >
       {hasLinks
         ? links.map((submenu, idx) => {
@@ -177,25 +183,29 @@ export const MainLinks: React.FC<{ onNavigate: (path: string) => void }> = ({
     const toAdmin = Boolean(mode === "admin");
     if (adminMode && toAdmin) return;
 
-    console.log(pathname);
+    var navigateTo = pathname;
     const adminPathname = pathname === "/" ? "/members/individual" : pathname;
-    // If the path is /admin, remove the /admin part
-    var navigateTo = toAdmin
-      ? "/admin" + adminPathname
-      : pathname
-          .split("/admin")
-          .join("")
-          // Remove the tabId from the path, if it's there
-          .split(tabId ? `/${tabId}` : "")
-          .join("");
+    if (toAdmin) {
+      navigateTo = "/admin" + adminPathname;
+      if (navigateTo.includes("/my"))
+        navigateTo = navigateTo.replace(/\/my/, "/");
+    } else {
+      if (tabId)
+        navigateTo = navigateTo.replace(new RegExp(`/${tabId}`, "g"), "");
+      navigateTo = navigateTo.replace(/\/admin/g, "");
+      if (navigateTo.includes("/members")) {
+        console.log(1349, navigateTo);
+        navigateTo = "/";
+      }
+    }
+
     // If the path is /members/ and we're not in admin mode, go to the home page
-    if (pathname.includes("/members/") && !toAdmin) navigateTo = "/";
     setMode(toAdmin);
     navigate(navigateTo);
   };
 
   return (
-    <Stack>
+    <Stack spacing={0}>
       {isAdmin && (
         <SegmentedControl
           color="primary"

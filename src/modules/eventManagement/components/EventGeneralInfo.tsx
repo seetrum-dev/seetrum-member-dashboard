@@ -1,9 +1,10 @@
-import { displayEventDate, kLineClamp } from "@/lib/utils";
+import { displayEventDate, extractContent, kLineClamp } from "@/lib/utils";
 import { updateScheduledEvent } from "@/modules/event/services/eventService";
 import { useEventDetail } from "@/modules/event/store/useEventDetail";
 import { useEventsList } from "@/modules/event/store/useEventList";
 import { ScheduledEvent } from "@/types/models/scheduledEvent";
 import { IconCalendar } from "@/ui/Icons";
+import { RichTextEditorField } from "@/ui/Input";
 import { Typography } from "@/ui/Typography";
 import {
   Box,
@@ -20,7 +21,7 @@ import {
 } from "@mantine/core";
 import { DateTimePicker } from "@mantine/dates";
 import { UseFormReturnType, isNotEmpty, useForm } from "@mantine/form";
-import { Link, RichTextEditor } from "@mantine/tiptap";
+import { Link } from "@mantine/tiptap";
 import { Editor, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { Timestamp } from "firebase/firestore";
@@ -196,13 +197,26 @@ const GeneralInfoViewer = ({ event }: { event?: ScheduledEvent }) => {
       <Divider />
       <Stack>
         <Typography variant="title-md">Description</Typography>
-        {event ? (
-          <TypographyStylesProvider>
-            <Box
-              component="div"
-              dangerouslySetInnerHTML={{ __html: event?.description || "-" }}
-            />
-          </TypographyStylesProvider>
+        {event !== undefined ? (
+          <>
+            <TypographyStylesProvider>
+              {extractContent(event.description).trim() === "" ? (
+                <Typography
+                  textVariant="body-sm"
+                  color="dimmed"
+                  align="center"
+                  my={16}
+                >
+                  <i>No description available</i>
+                </Typography>
+              ) : (
+                <Box
+                  component="div"
+                  dangerouslySetInnerHTML={{ __html: event.description }}
+                />
+              )}
+            </TypographyStylesProvider>
+          </>
         ) : (
           <Stack h={100} w="100%" justify="center" align="center">
             <Loader />
@@ -288,43 +302,7 @@ const GeneralInfoEditor = ({
       />
       <Stack spacing={8}>
         <Typography textVariant="title-md">Description</Typography>
-        <RichTextEditor editor={editor} sx={{ borderRadius: 8 }}>
-          <RichTextEditor.Toolbar
-            sx={{ borderTopLeftRadius: 8, borderTopRightRadius: 8 }}
-            sticky
-            stickyOffset={60}
-          >
-            <RichTextEditor.ControlsGroup>
-              <RichTextEditor.Bold />
-              <RichTextEditor.Italic />
-              <RichTextEditor.Strikethrough />
-              <RichTextEditor.ClearFormatting />
-            </RichTextEditor.ControlsGroup>
-
-            <RichTextEditor.ControlsGroup>
-              <RichTextEditor.H1 />
-              <RichTextEditor.H2 />
-              <RichTextEditor.H3 />
-              <RichTextEditor.H4 />
-              <RichTextEditor.H5 />
-              <RichTextEditor.H6 />
-            </RichTextEditor.ControlsGroup>
-
-            <RichTextEditor.ControlsGroup>
-              <RichTextEditor.Blockquote />
-              <RichTextEditor.Hr />
-              <RichTextEditor.BulletList />
-              <RichTextEditor.OrderedList />
-            </RichTextEditor.ControlsGroup>
-
-            <RichTextEditor.ControlsGroup>
-              <RichTextEditor.Link />
-              <RichTextEditor.Unlink />
-            </RichTextEditor.ControlsGroup>
-          </RichTextEditor.Toolbar>
-
-          <RichTextEditor.Content sx={{ borderRadius: 8 }} />
-        </RichTextEditor>
+        <RichTextEditorField editor={editor} />
       </Stack>
     </Stack>
   );
