@@ -88,16 +88,19 @@ export const MembersTableView = () => {
         },
       },
       {
-        id: "createdAt",
         header: "Joining at",
         enableGlobalFilter: false,
         enableColumnFilter: false,
+        accessorKey: "createdAt.toDate",
         size: 100,
-        accessorFn(originalRow) {
-          return Boolean(originalRow.createdAt.toDate());
-        },
         Cell(props) {
           return pretyDateTime(props.row.original.createdAt.toDate());
+        },
+        enableSorting: true,
+        sortingFn: (a, b) => {
+          return a.original.createdAt.toDate() > b.original.createdAt.toDate()
+            ? 1
+            : -1;
         },
       },
       {
@@ -157,11 +160,14 @@ export const MembersTableView = () => {
         enableColumnFilter: false,
         accessorKey: "createdAt.toString",
         size: 100,
-        accessorFn(originalRow) {
-          return Boolean(originalRow.createdAt.toDate());
-        },
         Cell(props) {
           return pretyDateTime(props.row.original.createdAt.toDate());
+        },
+        enableSorting: true,
+        sortingFn: (a, b) => {
+          return a.original.createdAt.toDate() > b.original.createdAt.toDate()
+            ? 1
+            : -1;
         },
       },
       {
