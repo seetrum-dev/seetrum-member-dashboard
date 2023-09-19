@@ -2,6 +2,7 @@ import { DEFAULT_TITLE } from "@/lib/constants";
 import { Header } from "../Header";
 
 import { extractInitials, toTitleCase } from "@/lib/utils";
+import { ProtectedPage } from "@/modules/auth/components/ProtectedPage";
 import { useAuthStore } from "@/modules/auth/stores/authStore";
 import {
   AppShell,
@@ -11,18 +12,24 @@ import {
   Flex,
   Group,
   Loader,
+  Menu,
   Navbar,
   UnstyledButton,
   rem,
   useMantineTheme,
 } from "@mantine/core";
-import React from "react";
-import { IconChevronRight, IconWhatsapp } from "../Icons";
+import { useDisclosure, useDocumentTitle, useMediaQuery } from "@mantine/hooks";
+import React, { useState } from "react";
+import { Outlet, useLocation } from "react-router-dom";
+import {
+  IconBoxArrowRight,
+  IconChevronRight,
+  IconEditSquare,
+  IconWhatsapp,
+} from "../Icons";
 import { Typography } from "../Typography";
 import { MainLinks } from "./MainLinks";
-import { Outlet, useLocation } from "react-router-dom";
-import { ProtectedPage } from "@/modules/auth/components/ProtectedPage";
-import { useDocumentTitle } from "@mantine/hooks";
+import { UpdateProfileModal } from "@/modules/user/components/updateProfileModal";
 
 export const MainLayout = () => {
   const { pathname } = useLocation();
@@ -78,7 +85,15 @@ export const MainLayout = () => {
 
 export const User: React.FC<any> = (props) => {
   const theme = useMantineTheme();
+  const isSmallScreen = useMediaQuery(`(max-width: ${theme.breakpoints.xs})`);
   const user = useAuthStore((state) => state.user);
+  const [isMenuOpened, setIsMenuOpened] = useState(false);
+  const logOut = useAuthStore((state) => state.logOut);
+  const [opened, { open, close }] = useDisclosure();
+
+  if (window) {
+    window.addEventListener("openUpdateProfileModal", open);
+  }
 
   if (!user) {
     return (
@@ -105,37 +120,66 @@ export const User: React.FC<any> = (props) => {
         borderTop: `${rem(1)} solid ${theme.colors.gray[2]}`,
       }}
     >
-      <UnstyledButton
-        sx={{
-          display: "block",
-          width: "100%",
-          padding: theme.spacing.xs,
-          borderRadius: theme.radius.md,
-          color: theme.black,
-
-          "&:hover": {
-            backgroundColor: theme.colors.gray[0],
-          },
-        }}
+      {opened && <UpdateProfileModal opened={opened} onClose={close} />}
+      <Menu
+        opened={isMenuOpened}
+        onChange={setIsMenuOpened}
+        position={isSmallScreen ? "top-end" : "right-end"}
+        trigger="click"
+        shadow="lg"
+        width={200}
       >
-        <Group>
-          <Avatar
-            // src="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=255&q=80"
-            radius="xl"
-            color="cyan"
-          >
-            {extractInitials(name)}
-          </Avatar>
-          <Box sx={{ flex: 1 }}>
-            <Typography textVariant="label-lg">{name}</Typography>
-            <Typography textVariant="body-sm" color="dimmed">
-              {email}
-            </Typography>
-          </Box>
+        <Menu.Target>
+          <UnstyledButton
+            sx={{
+              display: "block",
+              width: "100%",
+              padding: theme.spacing.xs,
+              borderRadius: theme.radius.md,
+              color: theme.black,
 
-          <IconChevronRight size={rem(18)} />
-        </Group>
-      </UnstyledButton>
+              "&:hover": {
+                backgroundColor: theme.colors.gray[0],
+              },
+            }}
+          >
+            <Group>
+              <Avatar
+                // src="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=255&q=80"
+                radius="xl"
+                color="cyan"
+              >
+                {extractInitials(name)}
+              </Avatar>
+              <Box sx={{ flex: 1 }}>
+                <Typography textVariant="label-lg">{name}</Typography>
+                <Typography textVariant="body-sm" color="dimmed">
+                  {email}
+                </Typography>
+              </Box>
+
+              <IconChevronRight size={rem(18)} />
+            </Group>
+          </UnstyledButton>
+        </Menu.Target>
+        <Menu.Dropdown>
+          {user.organization === undefined && (
+            <Menu.Item
+              icon={<IconEditSquare size={18} />}
+              onClick={() => open()}
+            >
+              Edit profile
+            </Menu.Item>
+          )}
+          <Menu.Item
+            icon={<IconBoxArrowRight size={18} />}
+            onClick={() => logOut()}
+            color="red"
+          >
+            Logout
+          </Menu.Item>
+        </Menu.Dropdown>
+      </Menu>
     </Box>
   );
 };

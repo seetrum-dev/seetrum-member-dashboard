@@ -28,6 +28,7 @@ import { useMediaQuery } from "@mantine/hooks";
 import React from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuthStore } from "../stores/authStore";
+import { DatePickerInput } from "@mantine/dates";
 
 type OrganizationFlat = {
   org_industry: string;
@@ -76,6 +77,8 @@ export const RegisterForm: React.FC = () => {
     email: "",
     address: "",
     informationChannel: "",
+    dateOfBirth: undefined,
+    gender: undefined,
     password: "",
     confirmPassword: "",
     phoneNumber: "",
@@ -98,6 +101,8 @@ export const RegisterForm: React.FC = () => {
         password,
         confirmPassword,
         address,
+        dateOfBirth,
+        gender,
         org_industry,
         informationChannel,
         org_pic_email,
@@ -130,6 +135,11 @@ export const RegisterForm: React.FC = () => {
           informationChannel: isNotEmpty(
             "Please tell us where do you hear about us"
           )(informationChannel),
+          dateOfBirth:
+            !isOrganization &&
+            isNotEmpty("Date of birth can't be empty")(dateOfBirth),
+          gender:
+            !isOrganization && isNotEmpty("Gander can't be empty")(gender),
           org_industry:
             isOrganization &&
             isNotEmpty("Industry can't be empty")(org_industry),
@@ -186,6 +196,9 @@ export const RegisterForm: React.FC = () => {
           picPhoneNumber: org_pic_phone_number,
         };
       }
+
+      if (!newUser.dateOfBirth) delete newUser.dateOfBirth;
+      if (!newUser.gender) delete newUser.gender;
 
       await register(newUser as UserRegistrationData);
       if (redirectTo) navigate(redirectTo);
@@ -315,6 +328,28 @@ export const RegisterForm: React.FC = () => {
                   withAsterisk
                   {...form.getInputProps("phoneNumber")}
                 />
+                {!isOrganization && (
+                  <Select
+                    label="Gender"
+                    placeholder="Pick one"
+                    data={[
+                      { label: "Male", value: "male" },
+                      { label: "Female", value: "female" },
+                    ]}
+                    withAsterisk
+                    {...form.getInputProps("gender")}
+                  />
+                )}
+                {!isOrganization && (
+                  <DatePickerInput
+                    label="Date of birth"
+                    placeholder="Enter your date of birth"
+                    withAsterisk
+                    {...form.getInputProps("dateOfBirth")}
+                    defaultValue={undefined}
+                    defaultDate={undefined}
+                  />
+                )}
                 <Select
                   data={[
                     "Social Media",

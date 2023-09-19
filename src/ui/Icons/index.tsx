@@ -22,6 +22,7 @@ import {
   BsFiletypePdf,
   BsGear,
   BsHouse,
+  BsInfoCircle,
   BsLightbulb,
   BsPencilFill,
   BsPencilSquare,
@@ -75,6 +76,7 @@ export const IconTrash = BsTrash;
 export const IconExclamation = BsExclamationCircle;
 export const IconAsterisk = BsAsterisk;
 export const IconGear = BsGear;
+export const IconInfo = BsInfoCircle;
 
 const AdminIconWrapper: React.FC<{ children: ReactNode }> = ({ children }) => {
   return (

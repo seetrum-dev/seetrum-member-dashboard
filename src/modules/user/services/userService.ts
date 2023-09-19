@@ -1,9 +1,5 @@
 import { COLLECTION_USERS } from "@/lib/constants";
-import {
-  getAllDocuments,
-  getDocumentById,
-  updateDocument,
-} from "@/services/firebase/helper";
+import { getAllDocuments, updateDocument } from "@/services/firebase/helper";
 import { User } from "@/types";
 
 export const getAllUsers = async (): Promise<User[]> => {

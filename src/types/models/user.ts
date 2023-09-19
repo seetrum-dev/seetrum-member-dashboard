@@ -15,6 +15,8 @@ export type UserRegistrationData = {
   address: string;
   informationChannel: string;
   motivationToJoin: string;
+  dateOfBirth?: Date;
+  gender?: string;
   organization?: Organization;
 };
 

@@ -194,7 +194,6 @@ export const MainLinks: React.FC<{ onNavigate: (path: string) => void }> = ({
         navigateTo = navigateTo.replace(new RegExp(`/${tabId}`, "g"), "");
       navigateTo = navigateTo.replace(/\/admin/g, "");
       if (navigateTo.includes("/members")) {
-        console.log(1349, navigateTo);
         navigateTo = "/";
       }
     }

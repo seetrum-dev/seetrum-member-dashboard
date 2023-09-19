@@ -1,16 +1,13 @@
 import { logoHorizontalUrl } from "@/lib/assets";
-import { useAuthStore } from "@/modules/auth/stores/authStore";
 import {
   Box,
   Burger,
-  Button,
   Flex,
   Header as MantineHeader,
   MediaQuery,
   useMantineTheme,
 } from "@mantine/core";
 import React from "react";
-import { IconBoxArrowRight } from "../Icons";
 
 interface Props {
   opened: boolean;
@@ -24,7 +21,6 @@ export const Header: React.FC<Props> = ({
   withoutNavigation = false,
 }) => {
   const theme = useMantineTheme();
-  const logOut = useAuthStore((state) => state.logOut);
 
   return (
     <MantineHeader height={60} p="xs">
@@ -52,14 +48,6 @@ export const Header: React.FC<Props> = ({
             <img src={logoHorizontalUrl} alt={"seetrum logo"} />
           </a>
         </Box>
-        <Button
-          variant="outline"
-          radius={"md"}
-          rightIcon={<IconBoxArrowRight size={18} />}
-          onClick={() => logOut()}
-        >
-          Log out
-        </Button>
       </Flex>
     </MantineHeader>
   );
